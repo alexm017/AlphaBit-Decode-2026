@@ -111,9 +111,9 @@ public class ArtifactControl {
     boolean stoggleButton = false;
 
     public void initServo(){
+        AngleTurret.setPosition(current_angleturret_position);
         LeftTurret.setPosition(current_leftturret_position);
         RightTurret.setPosition(current_rightturret_position);
-        AngleTurret.setPosition(current_angleturret_position);
     }
 
     public void updateAprilTag(){

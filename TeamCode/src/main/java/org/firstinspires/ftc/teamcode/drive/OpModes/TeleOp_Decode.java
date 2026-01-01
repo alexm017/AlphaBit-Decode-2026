@@ -38,7 +38,7 @@ public class TeleOp_Decode extends LinearOpMode {
                 buttonTrigger = false;
             }
 
-            telemetrys.addData("[+] 0. Red Audience, 1. Blue Audience, 2. Red Basket, 3. Blue Basket","[+]");
+            telemetrys.addData("[+] 0: Red Audience, 1: Blue Audience, 2: Red Basket, 3","Blue Basket [+]");
             telemetrys.addData("[->] Case : ", endCase);
             telemetrys.update();
         }
