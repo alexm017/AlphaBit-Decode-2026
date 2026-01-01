@@ -53,6 +53,8 @@ public class TeleOp_Decode extends LinearOpMode {
 
         waitForStart();
 
+        artifactControl.initServo();
+
         while(opModeIsActive()){
             chasis_control.Run();
             artifactControl.Run();
