@@ -66,8 +66,8 @@ public class ArtifactControl {
         Outtake_LeftMotor = hwdmap.get(DcMotor.class, "Outtake_LeftMotor");
         Outtake_RightMotor = hwdmap.get(DcMotor.class, "Outtake_RightMotor");
 
-        Intake_LeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        Intake_RightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        Intake_LeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        Intake_RightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         Outtake_LeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         Outtake_RightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -138,7 +138,7 @@ public class ArtifactControl {
                 Intake_RightMotor.setPower(1);
             } else if (gamepad2.b) {
                 Intake_LeftMotor.setPower(-1);
-                Intake_LeftMotor.setPower(-1);
+                Intake_RightMotor.setPower(-1);
             } else {
                 Intake_LeftMotor.setPower(0);
                 Intake_RightMotor.setPower(0);
