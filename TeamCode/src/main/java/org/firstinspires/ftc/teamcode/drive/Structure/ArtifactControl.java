@@ -109,6 +109,11 @@ public class ArtifactControl {
     boolean testingMode = true;
     boolean toggleButton = false;
     boolean stoggleButton = false;
+
+    public void updateAprilTag(){
+        aprilTagIdentification.telemetryAprilTag();
+    }
+
     public void Run(){
         gyroscope.updateOrientation();
         aprilTagIdentification.telemetryAprilTag();

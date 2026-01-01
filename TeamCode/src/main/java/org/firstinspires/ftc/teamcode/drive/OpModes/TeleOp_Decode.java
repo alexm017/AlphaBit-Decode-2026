@@ -45,13 +45,18 @@ public class TeleOp_Decode extends LinearOpMode {
 
         artifactControl = new ArtifactControl(hardwareMap, gamepad2, telemetrys,endCase);
 
+        while(opModeInInit()){
+            telemetrys.addData("[->] Case selected ", endCase);
+            artifactControl.updateAprilTag();
+            telemetrys.update();
+        }
+
         waitForStart();
 
         while(opModeIsActive()){
             chasis_control.Run();
             artifactControl.Run();
 
-            telemetrys.addData("[->] Operational Case ", endCase);
             telemetrys.addData("[Artifact] Current Left Turret Position ", artifactControl.current_leftturret_position);
             telemetrys.addData("[Artifact] Current Right Turret Position ", artifactControl.current_rightturret_position);
             telemetrys.addData("[Artifact] Current Angle Turret Position ", artifactControl.current_angleturret_position);
