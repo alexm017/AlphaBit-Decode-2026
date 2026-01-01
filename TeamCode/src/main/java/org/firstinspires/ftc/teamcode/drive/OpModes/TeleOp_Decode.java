@@ -51,6 +51,7 @@ public class TeleOp_Decode extends LinearOpMode {
             chasis_control.Run();
             artifactControl.Run();
 
+            telemetrys.addData("[->] Operational Case ", endCase);
             telemetrys.addData("[Artifact] Current Left Turret Position ", artifactControl.current_leftturret_position);
             telemetrys.addData("[Artifact] Current Right Turret Position ", artifactControl.current_rightturret_position);
             telemetrys.addData("[Artifact] Current Angle Turret Position ", artifactControl.current_angleturret_position);
