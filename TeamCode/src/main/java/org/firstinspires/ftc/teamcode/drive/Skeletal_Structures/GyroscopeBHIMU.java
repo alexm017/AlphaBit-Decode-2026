@@ -23,4 +23,8 @@ public class GyroscopeBHIMU {
     public double getHeading(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
+
+    public void resetHeading(){
+        imu.resetYaw();
+    }
 }
