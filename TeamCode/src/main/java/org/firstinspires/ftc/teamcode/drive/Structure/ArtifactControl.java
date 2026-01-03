@@ -67,7 +67,7 @@ public class ArtifactControl {
             isRedAlliance = true;
             targetAngle = 36.5;
         }else{
-            targetAngle = 143.5;
+            targetAngle = 323.5;
         }
 
         Intake_LeftMotor = hwdmap.get(DcMotor.class, "Intake_LeftMotor");
