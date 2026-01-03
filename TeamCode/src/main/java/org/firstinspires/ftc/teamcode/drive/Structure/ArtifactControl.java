@@ -36,8 +36,7 @@ public class ArtifactControl {
     Pose2d endPose_RedAudience = new Pose2d(59, 20, Math.toRadians(90));
     Pose2d endPose_BlueAudience = new Pose2d(59, -20, Math.toRadians(-90));
 
-    double endAngle = 0;
-    double targetAngle = 0;
+    double targetAngle;
     public boolean isRedAlliance = false;
 
     public ArtifactControl(HardwareMap hwdmap, Gamepad gmpd, MultipleTelemetry telemetrys, int fieldCase){
@@ -50,19 +49,15 @@ public class ArtifactControl {
         switch(fieldCase){
             case 0:
                 drive.setPoseEstimate(endPose_RedAudience);
-                endAngle = 90;
                 break;
             case 1:
                 drive.setPoseEstimate(endPose_BlueAudience);
-                endAngle = -90;
                 break;
             case 2:
                 drive.setPoseEstimate(endPose_RedBasket);
-                endAngle = 90;
                 break;
             case 3:
                 drive.setPoseEstimate(endPose_BlueBasket);
-                endAngle = -90;
                 break;
         }
 
@@ -284,13 +279,12 @@ public class ArtifactControl {
     public double getTurretAngle(){
         double max_angle = 7;
         double min_angle = 0;
-        double max_distance = 0;
-        double anglePerInch = max_distance/(max_angle-min_angle);
+        double max_distance = 144;
+        double anglePerInch = (max_angle-min_angle)/max_distance;
         double angleToCm;
         angleToCm = getBasketDistance() * anglePerInch;
-        double cmToPosition = angleToCm * angleServoPosToDegree;
 
-        return cmToPosition;
+        return angleToCm * angleServoPosToDegree;
     }
 
     public void updateShooter() {
