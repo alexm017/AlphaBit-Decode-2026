@@ -49,6 +49,7 @@ public class TeleOp_Decode extends LinearOpMode {
             telemetrys.addData("[Artifact] X Position: ", artifactControl.x_position);
             telemetrys.addData("[Artifact] Y Position: ", artifactControl.y_position);
             telemetrys.addData("[Artifact] RR Heading Angle: ", artifactControl.rr_headingAngle);
+            telemetrys.addData("[Artifact] isRedAlliance ", artifactControl.isRedAlliance);
 
             telemetrys.update();
         }

@@ -36,6 +36,8 @@ public class ArtifactControl {
     Pose2d endPose_RedAudience = new Pose2d(59, 20, Math.toRadians(90));
     Pose2d endPose_BlueAudience = new Pose2d(59, -20, Math.toRadians(-90));
 
+    public boolean isRedAlliance = false;
+
     public ArtifactControl(HardwareMap hwdmap, Gamepad gmpd, MultipleTelemetry telemetrys, int fieldCase){
         gamepad2 = gmpd;
         telemetry = telemetrys;
@@ -59,6 +61,10 @@ public class ArtifactControl {
         }
 
         twoWheelTrackingLocalizer = new TwoWheelTrackingLocalizer(hwdmap, drive);
+
+        if(fieldCase == 0 || fieldCase == 2){
+            isRedAlliance = true;
+        }
 
         Intake_LeftMotor = hwdmap.get(DcMotor.class, "Intake_LeftMotor");
         Intake_RightMotor = hwdmap.get(DcMotor.class, "Intake_RightMotor");
@@ -107,7 +113,6 @@ public class ArtifactControl {
 
     boolean toggleButton = false;
     boolean stoggleButton = false;
-
     public void initServo(){
         AngleTurret.setPosition(current_angleturret_position);
         LeftTurret.setPosition(current_leftturret_position);

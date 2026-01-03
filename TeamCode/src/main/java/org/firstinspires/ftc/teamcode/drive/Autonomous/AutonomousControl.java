@@ -74,18 +74,31 @@ public class AutonomousControl extends LinearOpMode {
                 .lineTo(new Vector2d(59,20))
                 .build();
 
-        if(gamepad1.dpad_left){
-            if(!firstButtonTrigger) {
-                blueAlliance = true;
-                autoCase = autoCase + 1;
-                firstButtonTrigger = true;
+        while(opModeInInit()) {
+            if (gamepad1.dpad_left) {
+                if (!firstButtonTrigger) {
+                    if(!blueAlliance) {
+                        autoCase = autoCase + 1;
+                    }else{
+                        autoCase = autoCase - 1;
+                    }
+                    firstButtonTrigger = true;
+                }
+            } else if (gamepad1.dpad_up) {
+                if (!secondButtonTrigger) {
+                    if(!nearBasket){
+                        autoCase = autoCase + 2;
+                    }else{
+                        autoCase = autoCase - 2;
+                    }
+                    secondButtonTrigger = true;
+                }
+            }else{
+                secondButtonTrigger = false;
             }
-        }else if(gamepad1.dpad_up){
-            if(!secondButtonTrigger) {
-                nearBasket = true;
-                autoCase = autoCase + 2;
-                secondButtonTrigger = true;
-            }
+
+            telemetry.addData("[->] Case ", autoCase);
+            telemetry.update();
         }
 
         waitForStart();
@@ -109,6 +122,10 @@ public class AutonomousControl extends LinearOpMode {
 
         while(opModeIsActive()) {
             drive.update();
+            telemetry.addData("[->] X ",  drive.getPoseEstimate().getX());
+            telemetry.addData("[->] Y ", drive.getPoseEstimate().getY());
+            telemetry.addData("[->] HDG ", drive.getPoseEstimate().getHeading());
+            telemetry.update();
         }
     }
 }

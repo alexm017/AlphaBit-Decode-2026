@@ -40,7 +40,7 @@ public class AprilTagIdentification {
     public void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+        telemetry.addData("[->] AprilTags Detected", currentDetections.size());
 
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
