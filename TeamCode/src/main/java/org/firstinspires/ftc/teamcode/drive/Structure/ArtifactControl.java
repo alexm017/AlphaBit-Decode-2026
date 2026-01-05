@@ -91,8 +91,8 @@ public class ArtifactControl {
         BlockArtifact = hwdmap.get(Servo.class,"BlockArtifact");
     }
 
-    double leftTurret_initPosition = 0.5; // neededed to be changed
-    double rightTurret_initPosition = 0.5; // neededed to be changed
+    double leftTurret_initPosition = 0.5; // needs to be changed
+    double rightTurret_initPosition = 0.5; // needs to be changed
     double angleTurret_initPosition = 0.9;
 
     double min_leftturret_position = 0;
@@ -122,11 +122,16 @@ public class ArtifactControl {
     public boolean allowedToShoot = false;
     boolean rotateToLeft = false;
 
-    double x_blue_basket = -69.0;
-    double x_red_basket = -69.0;
+    double x_blue_basket = -70.0;
+    double x_red_basket = -70.0;
 
-    double y_blue_basket = -62.0;
-    double y_red_basket = 64;
+    double y_blue_basket = -63.0;
+    double y_red_basket = 65;
+
+    double x_red_basket_angleTurret = -57.0;
+    double x_blue_basket_angleTurret = -57.0;
+    double y_red_basket_angleTurret = 45.0;
+    double y_blue_basket_angleTurret = -43.0;
 
     public boolean manualControl = false;
     boolean toggleS = false;
@@ -271,7 +276,12 @@ public class ArtifactControl {
 
     public void dynamicTargetAngle(){
         double positive_x_position = x_position + 70;
-        double ipotenuza = getBasketDistance();
+        double ipotenuza;
+        if(isRedAlliance) {
+            ipotenuza = Math.sqrt(Math.pow(x_red_basket - x_position, 2) + Math.pow(y_red_basket - y_position, 2));
+        }else{
+            ipotenuza = Math.sqrt(Math.pow(x_blue_basket - x_position, 2) + Math.pow(y_blue_basket - y_position, 2));
+        }
         targetAngle = Math.toDegrees(Math.sin(positive_x_position/ipotenuza));
     }
 
@@ -306,9 +316,9 @@ public class ArtifactControl {
     public double getBasketDistance(){
         double distanceToBasket;
         if(isRedAlliance) {
-            distanceToBasket = Math.sqrt(Math.pow(x_red_basket - x_position, 2) + Math.pow(y_red_basket - y_position, 2));
+            distanceToBasket = Math.sqrt(Math.pow(x_red_basket_angleTurret - x_position, 2) + Math.pow(y_red_basket_angleTurret - y_position, 2));
         }else{
-            distanceToBasket = Math.sqrt(Math.pow(x_blue_basket - x_position, 2) + Math.pow(y_blue_basket - y_position, 2));
+            distanceToBasket = Math.sqrt(Math.pow(x_blue_basket_angleTurret - x_position, 2) + Math.pow(y_blue_basket_angleTurret - y_position, 2));
         }
         return distanceToBasket;
     }
@@ -324,7 +334,7 @@ public class ArtifactControl {
         double angleToCm;
         double max_angle = 0.9;
         double min_angle = 0.2;
-        double max_distance = 146;
+        double max_distance = 135;
         double anglePerInch = (max_angle-min_angle)/max_distance;
         angleToCm = getBasketDistance() * anglePerInch;
 
@@ -371,7 +381,7 @@ public class ArtifactControl {
 
         double max_angle = 0.9;
         double min_angle = 0.2;
-        double max_distance = 146;
+        double max_distance = 135;
         double anglePerInch = (max_angle-min_angle)/max_distance;
         double angleToCm = distanceToBasket * anglePerInch;
         AngleTurret.setPosition(angleToCm);
