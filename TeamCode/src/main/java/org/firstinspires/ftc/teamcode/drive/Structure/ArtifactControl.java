@@ -133,6 +133,8 @@ public class ArtifactControl {
     double y_red_basket_angleTurret = 45.0;
     double y_blue_basket_angleTurret = -43.0;
 
+    public double detectionId = 0;
+
     public boolean manualControl = false;
     boolean toggleS = false;
 
@@ -155,6 +157,7 @@ public class ArtifactControl {
         headingAngle = gyroscope.getHeading();
         x_position = robotPose.getX();
         y_position = robotPose.getY();
+        detectionId = aprilTagIdentification.detectionId;
 
         if(!manualControl) {
             areaOfThrowing();
