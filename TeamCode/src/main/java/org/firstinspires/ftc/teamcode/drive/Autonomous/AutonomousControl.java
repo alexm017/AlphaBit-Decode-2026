@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.Autonomous;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,11 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage;
+import org.firstinspires.ftc.teamcode.drive.Structure.ArtifactControl;
 
 //FTC Decode 2026 AutonomousControl
 @Autonomous
 public class AutonomousControl extends LinearOpMode {
     SampleMecanumDrive drive;
+    MultipleTelemetry multipleTelemetry;
+    ArtifactControl artifactControl;
     TrajectorySequence trajectoryRedBasket, trajectoryBlueBasket, trajectoryRedAudience, trajectoryBlueAudience;
 
     Pose2d startPose_RedBasket = new Pose2d(-57, 45, Math.toRadians(126.5));
@@ -29,22 +33,50 @@ public class AutonomousControl extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
+        multipleTelemetry = new MultipleTelemetry();
+        artifactControl = new ArtifactControl(hardwareMap, gamepad2, multipleTelemetry, 0);
 
         drive.setPoseEstimate(startPose_RedBasket);
 
         trajectoryRedBasket = drive.trajectorySequenceBuilder(startPose_RedBasket)
                 .lineToLinearHeading(new Pose2d(-12, 15, Math.toRadians(90)))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(36.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .waitSeconds(5)
+                .addTemporalMarker(() -> artifactControl.throwArtifacts())
+                .waitSeconds(10)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(12,25))
+                .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(12,45))
+                .waitSeconds(2)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(4,52))
                 .lineTo(new Vector2d(4,25))
                 .lineTo(new Vector2d(-12,15))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(36.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .waitSeconds(5)
+                .addTemporalMarker(() -> artifactControl.throwArtifacts())
+                .waitSeconds(10)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
+                .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(-12,45))
+                .waitSeconds(2)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(-20,25))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(36.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .waitSeconds(5)
+                .addTemporalMarker(() -> artifactControl.throwArtifacts())
+                .waitSeconds(10)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .build();
 
         trajectoryBlueBasket = drive.trajectorySequenceBuilder(startPose_BlueBasket)
                 .lineToLinearHeading(new Pose2d(-12, -15, Math.toRadians(-90)))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(36.5, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .waitSeconds(5)
+                .addTemporalMarker(() -> artifactControl.throwArtifacts())
+                .waitSeconds(10)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(12,-25))
                 .lineTo(new Vector2d(12,-45))
                 .lineTo(new Vector2d(4,-52))
@@ -56,6 +88,11 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryBlueAudience = drive.trajectorySequenceBuilder(startPose_BlueAudience)
                 .lineToLinearHeading(new Pose2d(36,-25, Math.toRadians(-90)))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(36.5, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .waitSeconds(5)
+                .addTemporalMarker(() -> artifactControl.throwArtifacts())
+                .waitSeconds(10)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(36,-45))
                 .lineTo(new Vector2d(59,-20))
                 .lineTo(new Vector2d(59,-53))
@@ -66,6 +103,11 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryRedAudience = drive.trajectorySequenceBuilder(startPose_RedAudience)
                 .lineToLinearHeading(new Pose2d(36,25, Math.toRadians(90)))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(36.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .waitSeconds(5)
+                .addTemporalMarker(() -> artifactControl.throwArtifacts())
+                .waitSeconds(10)
+                .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(36,45))
                 .lineTo(new Vector2d(59,20))
                 .lineTo(new Vector2d(59,55))

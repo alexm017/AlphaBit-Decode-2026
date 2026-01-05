@@ -170,10 +170,7 @@ public class ArtifactControl {
         }
 
         if(gamepad2.b){
-            Intake_LeftMotor.setPower(0);
-            Intake_RightMotor.setPower(0);
-            Outtake_LeftMotor.setPower(0);
-            Outtake_RightMotor.setPower(0);
+            stopIntakeOuttake();
         }
 
         if (gamepad2.left_bumper && current_leftturret_position > min_leftturret_position && current_rightturret_position > min_rightturret_position && manualControl) {
@@ -222,20 +219,27 @@ public class ArtifactControl {
         }
     }
 
-    void getArtifacts(){
+    public void getArtifacts(){
         BlockArtifact.setPosition(artifact_block_position);
         Intake_LeftMotor.setPower(1);
         Intake_RightMotor.setPower(1);
         artifact_status_blocked = true;
     }
 
-    void throwArtifacts(){
+    public void throwArtifacts(){
         BlockArtifact.setPosition(artifact_unblock_position);
         Outtake_LeftMotor.setPower(1);
         Outtake_RightMotor.setPower(1);
         Intake_LeftMotor.setPower(1);
         Intake_RightMotor.setPower(1);
         artifact_status_blocked = false;
+    }
+
+    public void stopIntakeOuttake(){
+        Intake_LeftMotor.setPower(0);
+        Intake_RightMotor.setPower(0);
+        Outtake_LeftMotor.setPower(0);
+        Outtake_RightMotor.setPower(0);
     }
 
     public void areaOfThrowing(){
@@ -305,7 +309,7 @@ public class ArtifactControl {
 
     public double getTurretPosition(){
         double servoAngleToPosition;
-        servoAngleToPosition = getBasketDirection() * turretServoPosToDegree; // neededed to be changed
+        servoAngleToPosition = getBasketDirection() * turretServoPosToDegree; // needs to be changed
 
         return servoAngleToPosition;
     }
@@ -339,5 +343,36 @@ public class ArtifactControl {
         }
         LeftTurret.setPosition(current_leftturret_position);
         AngleTurret.setPosition(current_angleturret_position);
+    }
+
+    void setTurretAngle(double angle, boolean rotateLeft){
+        double servoPosition = angle * turretServoPosToDegree;
+        if(rotateLeft){
+            current_leftturret_position = leftTurret_initPosition - servoPosition;
+        }else{
+            current_leftturret_position = leftTurret_initPosition + servoPosition;
+        }
+        LeftTurret.setPosition(current_leftturret_position);
+    }
+
+    void setAngleTurretAngle(double x_pos, double y_pos, boolean redAlliance){
+        double distanceToBasket;
+        if(redAlliance) {
+            distanceToBasket = Math.sqrt(Math.pow(x_red_basket - x_pos, 2) + Math.pow(y_red_basket - y_pos, 2));
+        }else{
+            distanceToBasket = Math.sqrt(Math.pow(x_blue_basket - x_pos, 2) + Math.pow(y_blue_basket - y_pos, 2));
+        }
+
+        double max_angle = 0.9;
+        double min_angle = 0.2;
+        double max_distance = 146;
+        double anglePerInch = (max_angle-min_angle)/max_distance;
+        double angleToCm = distanceToBasket * anglePerInch;
+        AngleTurret.setPosition(angleToCm);
+    }
+
+    public void setAutonomousShooter(double angle, boolean rotateLeft, double x_pos, double y_pos, boolean redAlliance){
+        setTurretAngle(angle, rotateLeft);
+        setAngleTurretAngle(x_pos, y_pos, redAlliance);
     }
 }

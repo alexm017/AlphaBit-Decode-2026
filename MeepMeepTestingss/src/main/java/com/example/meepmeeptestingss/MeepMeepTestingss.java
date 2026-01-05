@@ -28,7 +28,7 @@ public class MeepMeepTestingss {
                         .lineTo(new Vector2d(4,25))
                         .lineTo(new Vector2d(-12,15))
                         .lineTo(new Vector2d(-12,45))
-                        .lineTo(new Vector2d(59,20))
+                        .lineTo(new Vector2d(-20,25))
                         .build());
 
 
