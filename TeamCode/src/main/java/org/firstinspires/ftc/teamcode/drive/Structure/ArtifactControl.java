@@ -214,7 +214,7 @@ public class ArtifactControl {
             stoggleButton = false;
         }
 
-        if(gamepad2.left_trigger > 75 && gamepad2.right_trigger > 75){
+        if(gamepad2.left_trigger > 0.75 && gamepad2.right_trigger > 0.75){
             if(!toggleS) {
                 manualControl = !manualControl;
                 toggleS = true;
@@ -282,10 +282,11 @@ public class ArtifactControl {
         double ipotenuza;
         if(isRedAlliance) {
             ipotenuza = Math.sqrt(Math.pow(x_red_basket - x_position, 2) + Math.pow(y_red_basket - y_position, 2));
+            targetAngle = Math.toDegrees(Math.sin(positive_x_position/ipotenuza));
         }else{
             ipotenuza = Math.sqrt(Math.pow(x_blue_basket - x_position, 2) + Math.pow(y_blue_basket - y_position, 2));
+            targetAngle = 360 - Math.toDegrees(Math.sin(positive_x_position/ipotenuza));
         }
-        targetAngle = Math.toDegrees(Math.sin(positive_x_position/ipotenuza));
     }
 
     public double getBasketDirection(){
@@ -348,19 +349,24 @@ public class ArtifactControl {
         double servoPos = getTurretPosition();
         current_angleturret_position = 0.2 + getTurretAngle();
         if(rotateToLeft){
-            if((leftTurret_initPosition-servoPos) >= min_leftturret_position) {
+            if(((leftTurret_initPosition-servoPos) >= min_leftturret_position) && ((rightTurret_initPosition-servoPos) >= min_rightturret_position)) {
                 current_leftturret_position = leftTurret_initPosition - servoPos;
+                current_rightturret_position = rightTurret_initPosition - servoPos;
             }else{
                 current_leftturret_position = 0;
+                current_rightturret_position = 0;
             }
         }else{
-            if((leftTurret_initPosition+servoPos) <= max_leftturret_position) {
+            if(((leftTurret_initPosition+servoPos) <= max_leftturret_position) && ((rightTurret_initPosition+servoPos) <= max_rightturret_position)) {
                 current_leftturret_position = leftTurret_initPosition + servoPos;
+                current_rightturret_position = rightTurret_initPosition + servoPos;
             }else{
                 current_leftturret_position = 1;
+                current_rightturret_position = 1;
             }
         }
         LeftTurret.setPosition(current_leftturret_position);
+        RightTurret.setPosition(current_rightturret_position);
         AngleTurret.setPosition(current_angleturret_position);
     }
 
