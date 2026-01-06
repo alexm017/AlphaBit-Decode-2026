@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.RoadRunner.drive.opmode.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.drive.ComputerVision.AprilTagIdentification;
 import org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.GyroscopeBHIMU;
 
@@ -19,7 +18,6 @@ public class ArtifactControl {
     MultipleTelemetry telemetry;
     GyroscopeBHIMU gyroscope = new GyroscopeBHIMU();
     SampleMecanumDrive drive;
-    TwoWheelTrackingLocalizer twoWheelTrackingLocalizer;
 
     DcMotor Intake_LeftMotor;
     DcMotor Intake_RightMotor;
@@ -60,8 +58,6 @@ public class ArtifactControl {
                 drive.setPoseEstimate(endPose_BlueBasket);
                 break;
         }
-
-        twoWheelTrackingLocalizer = new TwoWheelTrackingLocalizer(hwdmap, drive);
 
         if(fieldCase == 0 || fieldCase == 2){
             isRedAlliance = true;
@@ -122,10 +118,10 @@ public class ArtifactControl {
     public boolean allowedToShoot = false;
     boolean rotateToLeft = false;
 
-    double x_red_basket_angleTurret = -57.0;
-    double x_blue_basket_angleTurret = -57.0;
-    double y_red_basket_angleTurret = 45.0;
-    double y_blue_basket_angleTurret = -43.0;
+    double x_red_basket_angleTurret = -50.0;
+    double x_blue_basket_angleTurret = -50.0;
+    double y_red_basket_angleTurret = 48.0;
+    double y_blue_basket_angleTurret = -48.0;
 
     public double detectionId = 0;
 
@@ -275,9 +271,9 @@ public class ArtifactControl {
         double positive_x_position = x_position + 70;
         double positive_y_position;
         if(isRedAlliance){
-            positive_y_position = Math.abs((y_position -64));
+            positive_y_position = Math.abs((y_position -70));
         }else{
-            positive_y_position = Math.abs((y_position + 64));
+            positive_y_position = Math.abs((y_position + 70));
         }
 
         double calculatedAngle = Math.abs(Math.toDegrees(Math.atan2(positive_x_position, positive_y_position)));
@@ -336,18 +332,22 @@ public class ArtifactControl {
 
     public double getTurretAngle(){
         double angleToCm;
-        double max_angle = 0.9;
-        double min_angle = 0.2;
-        double max_distance = 135;
-        double anglePerInch = (max_angle-min_angle)/max_distance;
+        double max_angle = 0.2;
+        double min_angle = 0.9;
+        double max_distance = 130;
+        double anglePerInch = Math.abs(((max_angle-min_angle)/max_distance));
         angleToCm = getBasketDistance() * anglePerInch;
+
+        if(angleToCm > 0.7){
+            angleToCm = 0.7;
+        }
 
         return angleToCm;
     }
 
     public void updateShooter() {
         double servoPos = getTurretPosition();
-        current_angleturret_position = 0.2 + getTurretAngle();
+        current_angleturret_position = 0.9 - getTurretAngle();
         if(rotateToLeft){
             if(((leftTurret_initPosition-servoPos) >= min_leftturret_position) && ((rightTurret_initPosition-servoPos) >= min_rightturret_position)) {
                 current_leftturret_position = leftTurret_initPosition - servoPos;
@@ -374,10 +374,13 @@ public class ArtifactControl {
         double servoPosition = angle * turretServoPosToDegree;
         if(rotateLeft){
             current_leftturret_position = leftTurret_initPosition - servoPosition;
+            current_rightturret_position = rightTurret_initPosition - servoPosition;
         }else{
             current_leftturret_position = leftTurret_initPosition + servoPosition;
+            current_rightturret_position = rightTurret_initPosition + servoPosition;
         }
         LeftTurret.setPosition(current_leftturret_position);
+        RightTurret.setPosition(current_rightturret_position);
     }
 
     void setAngleTurretAngle(double x_pos, double y_pos, boolean redAlliance){
@@ -388,12 +391,19 @@ public class ArtifactControl {
             distanceToBasket = Math.sqrt(Math.pow(x_blue_basket_angleTurret - x_pos, 2) + Math.pow(y_blue_basket_angleTurret - y_pos, 2));
         }
 
-        double max_angle = 0.9;
-        double min_angle = 0.2;
-        double max_distance = 135;
-        double anglePerInch = (max_angle-min_angle)/max_distance;
+        double max_angle = 0.2;
+        double min_angle = 0.9;
+        double max_distance = 130;
+        double anglePerInch = Math.abs(((max_angle-min_angle)/max_distance));
         double angleToCm = distanceToBasket * anglePerInch;
-        AngleTurret.setPosition(angleToCm);
+
+        if(angleToCm > 0.7){
+            angleToCm = 0.7;
+        }
+
+        double angleTurretPosition = 0.9 - angleToCm;
+
+        AngleTurret.setPosition(angleTurretPosition);
     }
 
     public void setAutonomousShooter(double angle, boolean rotateLeft, double x_pos, double y_pos, boolean redAlliance){
