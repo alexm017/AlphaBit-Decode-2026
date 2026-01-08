@@ -158,9 +158,9 @@ public class ArtifactControl {
             getArtifacts();
         }else if(gamepad2.y){
             if(allowedToShoot && !manualControl) {
-                throwArtifacts();
+                throwArtifacts(getFlyWheelPower(0,0,false,false), true);
             }else if(manualControl){
-                throwArtifacts();
+                throwArtifacts(0, false);
             }
         }
 
@@ -221,10 +221,15 @@ public class ArtifactControl {
         artifact_status_blocked = true;
     }
 
-    public void throwArtifacts(){
+    public void throwArtifacts(double customFlyWheelPower, boolean useCustomPower){
         BlockArtifact.setPosition(artifact_unblock_position);
-        Outtake_LeftMotor.setPower(1);
-        Outtake_RightMotor.setPower(1);
+        if(useCustomPower) {
+            Outtake_LeftMotor.setPower(customFlyWheelPower);
+            Outtake_RightMotor.setPower(customFlyWheelPower);
+        }else{
+            Outtake_LeftMotor.setPower(1);
+            Outtake_RightMotor.setPower(1);
+        }
         Intake_LeftMotor.setPower(1);
         Intake_RightMotor.setPower(1);
         artifact_status_blocked = false;
@@ -315,12 +320,20 @@ public class ArtifactControl {
         return basketAngle;
     }
 
-    public double getBasketDistance(){
+    public double getBasketDistance(double custom_x_pos, double custom_y_pos, boolean redAlliance, boolean useCustomPos){
         double distanceToBasket;
-        if(isRedAlliance) {
-            distanceToBasket = Math.sqrt(Math.pow(x_red_basket_angleTurret - x_position, 2) + Math.pow(y_red_basket_angleTurret - y_position, 2));
+        if(!useCustomPos) {
+            if (isRedAlliance) {
+                distanceToBasket = Math.sqrt(Math.pow(x_red_basket_angleTurret - x_position, 2) + Math.pow(y_red_basket_angleTurret - y_position, 2));
+            } else {
+                distanceToBasket = Math.sqrt(Math.pow(x_blue_basket_angleTurret - x_position, 2) + Math.pow(y_blue_basket_angleTurret - y_position, 2));
+            }
         }else{
-            distanceToBasket = Math.sqrt(Math.pow(x_blue_basket_angleTurret - x_position, 2) + Math.pow(y_blue_basket_angleTurret - y_position, 2));
+            if(redAlliance){
+                distanceToBasket = Math.sqrt(Math.pow(x_red_basket_angleTurret - custom_x_pos, 2) + Math.pow(y_red_basket_angleTurret - custom_y_pos, 2));
+            }else{
+                distanceToBasket = Math.sqrt(Math.pow(x_blue_basket_angleTurret - custom_x_pos, 2) + Math.pow(y_blue_basket_angleTurret - custom_y_pos, 2));
+            }
         }
         return distanceToBasket;
     }
@@ -338,13 +351,34 @@ public class ArtifactControl {
         double min_angle = 0.9;
         double max_distance = 130;
         double anglePerInch = Math.abs(((max_angle-min_angle)/max_distance));
-        angleToCm = getBasketDistance() * anglePerInch;
+        angleToCm = getBasketDistance(0,0,false,false) * anglePerInch;
 
         if(angleToCm > 0.7){
             angleToCm = 0.7;
         }
 
         return angleToCm;
+    }
+
+    public double getFlyWheelPower(double custom_x_pos, double custom_y_pos, boolean redAlliance, boolean useCustomPos){
+        double min_power = 0.5;
+        double max_power = 1.0;
+        double max_distance = 130;
+        double powerPerInch = Math.abs((max_power-min_power)/max_distance);
+        double distance;
+        if(!useCustomPos) {
+            distance = getBasketDistance(0, 0, false, false);
+        }else{
+            distance = getBasketDistance(custom_x_pos, custom_y_pos, redAlliance, true);
+        }
+
+        double finalPower = min_power + (distance * powerPerInch);
+
+        if(finalPower > 1.0){
+            finalPower = 1.0;
+        }
+
+        return finalPower;
     }
 
     public void updateShooter() {

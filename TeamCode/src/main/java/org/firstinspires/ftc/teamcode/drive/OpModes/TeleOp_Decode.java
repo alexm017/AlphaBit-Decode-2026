@@ -55,9 +55,10 @@ public class TeleOp_Decode extends LinearOpMode {
             telemetrys.addData("[Artifact] Y Position: ", artifactControl.y_position);
             telemetrys.addData("[Artifact] allowedToShoot ", artifactControl.allowedToShoot);
             telemetrys.addData("[Artifact] Basket angle ", artifactControl.getBasketDirection());
-            telemetrys.addData("[Artifact] Basket distance ", artifactControl.getBasketDistance());
+            telemetrys.addData("[Artifact] Basket distance ", artifactControl.getBasketDistance(0,0,false,false));
             telemetrys.addData("[Artifact] Turret position ", artifactControl.getTurretPosition());
             telemetrys.addData("[Artifact] Turret angle ", artifactControl.getTurretAngle());
+            telemetrys.addData("[Artifact] FLyWheel Power ", artifactControl.getFlyWheelPower(0,0,false,false));
             telemetrys.addData("[Artifact] Detection Id ", artifactControl.detectionId);
 
             telemetrys.update();
