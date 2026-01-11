@@ -27,18 +27,20 @@ public class MotorTesting {
     }
 
     public double motor_position;
+    double max_power = 1.0;
+    double min_power = 0.0;
     public double current_power = 0.5;
     boolean triggerButton = false;
 
     public void Run(){
         motor_position = MotorTest.getCurrentPosition();
 
-        if(gmpd.left_bumper){
+        if(gmpd.left_bumper && current_power > min_power){
             if(!triggerButton) {
                 current_power = current_power - 0.05;
                 triggerButton = true;
             }
-        }else if(gmpd.right_bumper){
+        }else if(gmpd.right_bumper && current_power < max_power){
             if(!triggerButton) {
                 current_power = current_power + 0.05;
                 triggerButton = true;
