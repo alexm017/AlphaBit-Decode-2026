@@ -20,7 +20,7 @@ public class AprilTagIdentification {
     VisionPortal visionPortal;
     MultipleTelemetry telemetry;
 
-    public double detectionId = 0;
+    public int detectionId = 0;
     public void init(HardwareMap hwdmap, MultipleTelemetry telemetrys){
         telemetry = telemetrys;
         aprilTagProcessor = new AprilTagProcessor.Builder()
@@ -39,7 +39,7 @@ public class AprilTagIdentification {
         visionPortal = builder.build();
     }
 
-    public double getPatternId(){
+    public int getPatternId(){
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if(detection.metadata != null){

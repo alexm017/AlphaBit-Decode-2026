@@ -33,6 +33,7 @@ public class AutonomousControl extends LinearOpMode {
     boolean secondButtonTrigger = false;
     boolean patternFound = false;
     int autoCase = 0;
+    int currentId = 0;
 
     enum ObeliskPattern{
         UNKNOWN,
@@ -55,8 +56,6 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryRedBasket = drive.trajectorySequenceBuilder(startPose_RedBasket)
                 .lineToLinearHeading(new Pose2d(-12, 15, Math.toRadians(90)))
-                .waitSeconds(1)
-                .addTemporalMarker(() -> VarStorage.artifacts_pattern = (int) aprilTagIdentification.getPatternId())
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
                 .waitSeconds(5)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
@@ -89,8 +88,6 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryBlueBasket = drive.trajectorySequenceBuilder(startPose_BlueBasket)
                 .lineToLinearHeading(new Pose2d(-12, -15, Math.toRadians(-90)))
-                .waitSeconds(1)
-                .addTemporalMarker(() -> VarStorage.artifacts_pattern = (int) aprilTagIdentification.getPatternId())
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
                 .waitSeconds(5)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
@@ -214,9 +211,11 @@ public class AutonomousControl extends LinearOpMode {
                 secondButtonTrigger = false;
             }
 
-            if(!patternFound && !nearBasket){
-                if(aprilTagIdentification.getPatternId() != 0){
-                    switch((int) aprilTagIdentification.getPatternId()){
+            if(!nearBasket){
+                currentId = aprilTagIdentification.getPatternId();
+
+                if(currentId != 0){
+                    switch(currentId){
                         case 21:
                             currentPattern = ObeliskPattern.GPP;
                             break;
@@ -231,9 +230,7 @@ public class AutonomousControl extends LinearOpMode {
                 }
             }
 
-            if(patternFound){
-                multipleTelemetry.addData("[->] Pattern ", currentPattern);
-            }
+            multipleTelemetry.addData("[->] Pattern ", currentPattern);
 
             multipleTelemetry.addData("[->] Case ", autoCase);
             multipleTelemetry.update();
@@ -242,8 +239,8 @@ public class AutonomousControl extends LinearOpMode {
         waitForStart();
 
         VarStorage.autonomous_case = autoCase;
-        if(!nearBasket){
-            VarStorage.artifacts_pattern = (int) aprilTagIdentification.getPatternId();
+        if(!nearBasket && patternFound){
+            VarStorage.artifacts_pattern = currentId;
         }
 
         switch(autoCase){
@@ -267,9 +264,31 @@ public class AutonomousControl extends LinearOpMode {
 
         while(opModeIsActive()) {
             drive.update();
+
+            if(!patternFound){
+                currentId = aprilTagIdentification.getPatternId();
+
+                if(currentId != 0){
+                    switch(currentId){
+                        case 21:
+                            currentPattern = ObeliskPattern.GPP;
+                            break;
+                        case 22:
+                            currentPattern = ObeliskPattern.PGP;
+                            break;
+                        case 23:
+                            currentPattern = ObeliskPattern.PPG;
+                            break;
+                    }
+                    patternFound = true;
+                    VarStorage.artifacts_pattern = currentId;
+                }
+            }
+
             multipleTelemetry.addData("[->] X ",  drive.getPoseEstimate().getX());
             multipleTelemetry.addData("[->] Y ", drive.getPoseEstimate().getY());
             multipleTelemetry.addData("[->] HDG ", drive.getPoseEstimate().getHeading());
+            multipleTelemetry.addData("[->] Pattern ", currentPattern);
             multipleTelemetry.update();
         }
     }
