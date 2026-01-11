@@ -34,12 +34,13 @@ public class AutonomousControl extends LinearOpMode {
     int autoCase = 0;
 
     enum ObeliskPattern{
+        UNKNOWN,
         GPP,
         PGP,
         PPG
     }
 
-    ObeliskPattern currentPattern = ObeliskPattern.GPP;
+    ObeliskPattern currentPattern = ObeliskPattern.UNKNOWN;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -53,6 +54,8 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryRedBasket = drive.trajectorySequenceBuilder(startPose_RedBasket)
                 .lineToLinearHeading(new Pose2d(-12, 15, Math.toRadians(90)))
+                .waitSeconds(1)
+                .addTemporalMarker(() -> VarStorage.artifacts_pattern = (int) aprilTagIdentification.getPatternId())
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
                 .waitSeconds(5)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
@@ -85,6 +88,8 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryBlueBasket = drive.trajectorySequenceBuilder(startPose_BlueBasket)
                 .lineToLinearHeading(new Pose2d(-12, -15, Math.toRadians(-90)))
+                .waitSeconds(1)
+                .addTemporalMarker(() -> VarStorage.artifacts_pattern = (int) aprilTagIdentification.getPatternId())
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
                 .waitSeconds(5)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
@@ -233,6 +238,9 @@ public class AutonomousControl extends LinearOpMode {
         waitForStart();
 
         VarStorage.autonomous_case = autoCase;
+        if(!nearBasket){
+            VarStorage.artifacts_pattern = (int) aprilTagIdentification.getPatternId();
+        }
 
         switch(autoCase){
             case 0:
