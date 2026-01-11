@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.Autonomous;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -45,7 +46,7 @@ public class AutonomousControl extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
-        multipleTelemetry = new MultipleTelemetry();
+        multipleTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         artifactControl = new ArtifactControl(hardwareMap, gamepad2, multipleTelemetry, 0);
 
         artifactControl.initServo();
@@ -231,11 +232,11 @@ public class AutonomousControl extends LinearOpMode {
             }
 
             if(patternFound){
-                telemetry.addData("[->] Pattern ", currentPattern);
+                multipleTelemetry.addData("[->] Pattern ", currentPattern);
             }
 
-            telemetry.addData("[->] Case ", autoCase);
-            telemetry.update();
+            multipleTelemetry.addData("[->] Case ", autoCase);
+            multipleTelemetry.update();
         }
 
         waitForStart();
@@ -266,10 +267,10 @@ public class AutonomousControl extends LinearOpMode {
 
         while(opModeIsActive()) {
             drive.update();
-            telemetry.addData("[->] X ",  drive.getPoseEstimate().getX());
-            telemetry.addData("[->] Y ", drive.getPoseEstimate().getY());
-            telemetry.addData("[->] HDG ", drive.getPoseEstimate().getHeading());
-            telemetry.update();
+            multipleTelemetry.addData("[->] X ",  drive.getPoseEstimate().getX());
+            multipleTelemetry.addData("[->] Y ", drive.getPoseEstimate().getY());
+            multipleTelemetry.addData("[->] HDG ", drive.getPoseEstimate().getHeading());
+            multipleTelemetry.update();
         }
     }
 }
