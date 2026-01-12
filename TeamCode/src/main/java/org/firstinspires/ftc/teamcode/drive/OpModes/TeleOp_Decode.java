@@ -43,7 +43,7 @@ public class TeleOp_Decode extends LinearOpMode {
             artifactControl.Run();
 
             if(artifactControl.manualControl){
-                telemetrys.addData("[->] MANUAL CONTROL ", " ACTIVATED [<-]");
+                telemetrys.addData("[->] MANUAL CONTROL ", " ACTIVE [<-]");
                 telemetrys.addData(" ", " ");
             }
 
