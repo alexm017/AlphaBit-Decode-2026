@@ -47,7 +47,7 @@ public class ArtifactControl {
 
     public fieldPattern artifactPattern = fieldPattern.UNKNOWN;
 
-    public ArtifactControl(HardwareMap hwdmap, Gamepad gmpd, MultipleTelemetry telemetrys, int fieldCase){
+    public ArtifactControl(HardwareMap hwdmap, Gamepad gmpd, MultipleTelemetry telemetrys){
         gamepad2 = gmpd;
         telemetry = telemetrys;
         aprilTagIdentification.init(hwdmap, telemetrys);
@@ -69,7 +69,7 @@ public class ArtifactControl {
 
         drive = new SampleMecanumDrive(hwdmap);
 
-        switch(fieldCase){
+        switch(VarStorage.autonomous_case){
             case 0:
                 drive.setPoseEstimate(endPose_RedAudience);
                 break;
@@ -84,7 +84,7 @@ public class ArtifactControl {
                 break;
         }
 
-        if(fieldCase == 0 || fieldCase == 2){
+        if(VarStorage.autonomous_case == 0 || VarStorage.autonomous_case == 2){
             isRedAlliance = true;
         }
 
@@ -377,7 +377,7 @@ public class ArtifactControl {
 
     public double getTurretPosition(){
         double servoAngleToPosition;
-        servoAngleToPosition = getBasketDirection() * turretServoPosToDegree; // needs to be changed
+        servoAngleToPosition = getBasketDirection() * turretServoPosToDegree;
 
         return servoAngleToPosition;
     }

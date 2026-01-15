@@ -17,19 +17,16 @@ public class TeleOp_Decode extends LinearOpMode {
     ChasisControl chasis_control;
     ArtifactControl artifactControl;
 
-    int endCase = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        endCase = VarStorage.autonomous_case;
-
         telemetrys = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chasis_control = new ChasisControl(hardwareMap, gamepad1);
-        artifactControl = new ArtifactControl(hardwareMap, gamepad2, telemetrys,endCase);
+        artifactControl = new ArtifactControl(hardwareMap, gamepad2, telemetrys);
 
         while(opModeInInit()){
             telemetrys.addData("[->] Pattern ", artifactControl.artifactPattern);
-            telemetrys.addData("[->] Case selected ", endCase);
+            telemetrys.addData("[->] Case selected ", VarStorage.autonomous_case);
             artifactControl.updateAprilTag();
             telemetrys.update();
         }

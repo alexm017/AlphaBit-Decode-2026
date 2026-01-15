@@ -48,7 +48,7 @@ public class AutonomousControl extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
         multipleTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        artifactControl = new ArtifactControl(hardwareMap, gamepad2, multipleTelemetry, 0);
+        artifactControl = new ArtifactControl(hardwareMap, gamepad2, multipleTelemetry);
 
         artifactControl.initServo();
 
