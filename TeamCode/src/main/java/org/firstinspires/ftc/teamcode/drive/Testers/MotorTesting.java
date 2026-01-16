@@ -18,7 +18,7 @@ public class MotorTesting {
     public MotorTesting(HardwareMap hwdmap, Gamepad gmpdd, MultipleTelemetry multipleTelemetrys){
         multipleTelemetry = multipleTelemetrys;
         gmpd = gmpdd;
-        MotorTest = hwdmap.get(DcMotorEx.class, "Back_Left");
+        MotorTest = hwdmap.get(DcMotorEx.class, "Intake_LeftMotor");
 
         MotorTest.setDirection(DcMotorSimple.Direction.FORWARD);
         MotorTest.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
