@@ -143,6 +143,7 @@ public class ArtifactControl {
     double turretServoPosToDegree = 1.0/300.0; // needs to be changed
     public boolean allowedToShoot = false;
     boolean rotateToLeft = false;
+    public double defaultFlyWheelPower = 1.0;
 
     double x_red_basket_angleTurret = -50.0;
     double x_blue_basket_angleTurret = -50.0;
@@ -154,6 +155,8 @@ public class ArtifactControl {
     double blue_y_apriltag_position = -55.0;
 
     public boolean manualControl = true;
+
+    boolean flyToggle = false;
     boolean toggleS = false;
     boolean oneTimeRumble = false;
 
@@ -238,6 +241,20 @@ public class ArtifactControl {
             stoggleButton = false;
         }
 
+        if(gamepad2.left_trigger > 0.75 && gamepad2.right_trigger < 0.75 && manualControl){
+            if(!flyToggle && defaultFlyWheelPower > 0.0) {
+                defaultFlyWheelPower = defaultFlyWheelPower - 0.05;
+                flyToggle = true;
+            }
+        }else if(gamepad2.left_trigger < 0.75 && gamepad2.right_trigger > 0.75 && manualControl){
+            if(!flyToggle && defaultFlyWheelPower < 1.0){
+                defaultFlyWheelPower = defaultFlyWheelPower + 0.05;
+                flyToggle = true;
+            }
+        }else{
+            flyToggle = false;
+        }
+
         if(gamepad2.left_trigger > 0.75 && gamepad2.right_trigger > 0.75){
             if(!toggleS) {
                 manualControl = !manualControl;
@@ -247,9 +264,11 @@ public class ArtifactControl {
             toggleS = false;
         }
 
-        if(gamepad2.dpad_left && !manualResetPoseToggle){
-            manuallyResetPose();
-            manualResetPoseToggle = true;
+        if(gamepad2.dpad_left){
+            if(!manualResetPoseToggle) {
+                manuallyResetPose();
+                manualResetPoseToggle = true;
+            }
         }else{
             manualResetPoseToggle = false;
         }
@@ -268,9 +287,10 @@ public class ArtifactControl {
             Outtake_LeftMotor.setPower(customFlyWheelPower);
             Outtake_RightMotor.setPower(customFlyWheelPower);
         }else{
-            Outtake_LeftMotor.setPower(1);
-            Outtake_RightMotor.setPower(1);
+            Outtake_LeftMotor.setPower(defaultFlyWheelPower);
+            Outtake_RightMotor.setPower(defaultFlyWheelPower);
         }
+
         Intake_LeftMotor.setPower(1);
         Intake_RightMotor.setPower(1);
         artifact_status_blocked = false;
