@@ -17,15 +17,14 @@ import org.firstinspires.ftc.teamcode.drive.Structure.ArtifactControl;
 @Autonomous
 public class AutonomousControl extends LinearOpMode {
     SampleMecanumDrive drive;
-    AprilTagIdentification aprilTagIdentification = new AprilTagIdentification();
     MultipleTelemetry multipleTelemetry;
     ArtifactControl artifactControl;
     TrajectorySequence trajectoryRedBasket, trajectoryBlueBasket, trajectoryRedAudience, trajectoryBlueAudience;
 
     Pose2d startPose_RedBasket = new Pose2d(-57, 45, Math.toRadians(126.5));
     Pose2d startPose_BlueBasket = new Pose2d(-57, -43, Math.toRadians(-126.5));
-    Pose2d startPose_RedAudience = new Pose2d(60.5, 20, Math.toRadians(90));
-    Pose2d startPose_BlueAudience = new Pose2d(60.5, -20, Math.toRadians(-90));
+    Pose2d startPose_RedAudience = new Pose2d(60.5, 11, Math.toRadians(90));
+    Pose2d startPose_BlueAudience = new Pose2d(60.5, -11, Math.toRadians(-90));
 
     boolean blueAlliance = false;
     boolean nearBasket = false;
@@ -52,14 +51,12 @@ public class AutonomousControl extends LinearOpMode {
 
         artifactControl.initServo();
 
-        aprilTagIdentification.init(hardwareMap, multipleTelemetry);
-
         trajectoryRedBasket = drive.trajectorySequenceBuilder(startPose_RedBasket)
                 .lineToLinearHeading(new Pose2d(-12, 15, Math.toRadians(90)))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(12,25))
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
@@ -70,9 +67,9 @@ public class AutonomousControl extends LinearOpMode {
                 .lineTo(new Vector2d(4,25))
                 .lineTo(new Vector2d(-12,15))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(-12,45))
@@ -80,18 +77,18 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(-20,25))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(48, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .build();
 
         trajectoryBlueBasket = drive.trajectorySequenceBuilder(startPose_BlueBasket)
                 .lineToLinearHeading(new Pose2d(-12, -15, Math.toRadians(-90)))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(12,-25))
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
@@ -102,9 +99,9 @@ public class AutonomousControl extends LinearOpMode {
                 .lineTo(new Vector2d(4,-25))
                 .lineTo(new Vector2d(-12,-15))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(46.5, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(-12,-45))
@@ -112,17 +109,17 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(-20,-25))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(48, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .build();
 
         trajectoryBlueAudience = drive.trajectorySequenceBuilder(startPose_BlueAudience)
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineToLinearHeading(new Pose2d(36,-25, Math.toRadians(-90)))
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
@@ -131,9 +128,9 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(59,-20))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(59,-53))
@@ -143,17 +140,17 @@ public class AutonomousControl extends LinearOpMode {
                 .lineTo(new Vector2d(59,-53))
                 .lineTo(new Vector2d(59,-20))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .build();
 
         trajectoryRedAudience = drive.trajectorySequenceBuilder(startPose_RedAudience)
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineToLinearHeading(new Pose2d(36,25, Math.toRadians(90)))
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
@@ -162,9 +159,9 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(59,20))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(59,55))
@@ -174,9 +171,9 @@ public class AutonomousControl extends LinearOpMode {
                 .lineTo(new Vector2d(59,55))
                 .lineTo(new Vector2d(59,20))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(5)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
-                .waitSeconds(10)
+                .waitSeconds(4)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .build();
 
@@ -212,7 +209,7 @@ public class AutonomousControl extends LinearOpMode {
             }
 
             if(!nearBasket){
-                currentId = aprilTagIdentification.getPatternId();
+                currentId = artifactControl.getCurrentTag();
 
                 if(currentId != 0){
                     switch(currentId){
@@ -266,7 +263,7 @@ public class AutonomousControl extends LinearOpMode {
             drive.update();
 
             if(!patternFound){
-                currentId = aprilTagIdentification.getPatternId();
+                currentId = artifactControl.getCurrentTag();
 
                 if(currentId != 0){
                     switch(currentId){
