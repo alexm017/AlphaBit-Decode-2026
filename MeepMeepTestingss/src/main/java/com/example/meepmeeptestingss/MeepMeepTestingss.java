@@ -19,22 +19,20 @@ public class MeepMeepTestingss {
 
         Pose2d startPose_RedBasket = new Pose2d(-57, 45, Math.toRadians(126.5));
         Pose2d startPose_BlueBasket = new Pose2d(-57, -43, Math.toRadians(-126.5));
-        Pose2d startPose_RedAudience = new Pose2d(60.5, 20, Math.toRadians(90));
+        Pose2d startPose_RedAudience = new Pose2d(60.5, 10, Math.toRadians(90));
         Pose2d startPose_BlueAudience = new Pose2d(60.5, -20, Math.toRadians(-90));
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(startPose_RedBasket)
-                        .lineToLinearHeading(new Pose2d(-12, 15, Math.toRadians(90)))
-                        .lineTo(new Vector2d(12,25))
-                        .lineTo(new Vector2d(12,45))
-                        .lineTo(new Vector2d(4,52))
-                        .lineTo(new Vector2d(4,25))
-                        .lineTo(new Vector2d(-12,15))
-                        .lineTo(new Vector2d(-12,45))
-                        .lineTo(new Vector2d(-20,25))
-                        .lineTo(new Vector2d(-9,9))
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 12.4)
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(startPose_RedAudience)
+                        .lineToLinearHeading(new Pose2d(36,25, Math.toRadians(90)))
+                        .lineTo(new Vector2d(36,45))
+                        .lineTo(new Vector2d(59,20))
+                        .lineTo(new Vector2d(59,55))
+                        .lineTo(new Vector2d(60.2,59))
+                        .lineTo(new Vector2d(59,55))
+                        .lineTo(new Vector2d(59,20))
                         .build());
 
 

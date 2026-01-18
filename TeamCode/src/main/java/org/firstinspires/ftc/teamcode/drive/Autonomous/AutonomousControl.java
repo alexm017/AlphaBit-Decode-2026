@@ -116,7 +116,7 @@ public class AutonomousControl extends LinearOpMode {
                 .build();
 
         trajectoryBlueAudience = drive.trajectorySequenceBuilder(startPose_BlueAudience)
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(67, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
                 .waitSeconds(4)
@@ -147,7 +147,7 @@ public class AutonomousControl extends LinearOpMode {
                 .build();
 
         trajectoryRedAudience = drive.trajectorySequenceBuilder(startPose_RedAudience)
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(69, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(67, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.throwArtifacts(0, false))
                 .waitSeconds(4)
