@@ -215,6 +215,7 @@ public class ArtifactControl {
         if(!firstTimeManual && manualControl){
             manualModeInit();
             firstTimeManual = true;
+            switchFromManualMode = true;
         }else if(firstTimeManual && !manualControl){
             firstTimeManual = false;
         }
@@ -528,10 +529,23 @@ public class ArtifactControl {
             RightTurret.setPosition(current_rightturret_position);
             lastLeftTurretPos = current_leftturret_position;
             lastRightTurretPos = current_rightturret_position;
+        }else if(switchFromManualMode){
+            LeftTurret.setPosition(current_leftturret_position);
+            RightTurret.setPosition(current_rightturret_position);
+            lastLeftTurretPos = current_leftturret_position;
+            lastRightTurretPos = current_rightturret_position;
         }
+
         if((Math.abs(lastVerticalPos-current_angleturret_position) > verticalTurretDeadzone)) {
             AngleTurret.setPosition(current_angleturret_position);
             lastVerticalPos = current_angleturret_position;
+        }else if(switchFromManualMode){
+            AngleTurret.setPosition(current_angleturret_position);
+            lastVerticalPos = current_angleturret_position;
+        }
+
+        if(switchFromManualMode){
+            switchFromManualMode = false;
         }
     }
 
