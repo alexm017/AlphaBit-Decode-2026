@@ -7,10 +7,8 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.marginThreshold;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.max_FlyWheelDistance;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.max_FlyWheelPower;
-import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.max_TurretAngle;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.max_TurretAngleDistance;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.min_FlyWheelPower;
-import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.min_TurretAngle;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightTurret_initPosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.min_leftturret_position;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.min_rightturret_position;
@@ -135,8 +133,8 @@ public class ArtifactControl {
 
         Intake_LeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Intake_RightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Outtake_LeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Outtake_RightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Outtake_LeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        Outtake_RightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         LeftTurret = hwdmap.get(Servo.class,"LeftTurret");
         RightTurret = hwdmap.get(Servo.class,"RightTurret");
@@ -175,6 +173,7 @@ public class ArtifactControl {
     boolean toggleS = false;
     boolean oneTimeRumble = false;
     boolean firstTimeManual = false;
+    boolean switchFromManualMode = false;
 
     public void initServo(){
         AngleTurret.setPosition(angleTurret_initPosition);
@@ -243,20 +242,21 @@ public class ArtifactControl {
 
         if(gamepad2.b){
             stopIntakeOuttake();
+            wantsToThrowArtifacts = false;
         }
 
-        if (gamepad2.left_bumper && current_leftturret_position > min_leftturret_position && current_rightturret_position > min_rightturret_position && manualControl) {
+        if (gamepad2.left_bumper && current_leftturret_position < min_leftturret_position && current_rightturret_position < min_rightturret_position && manualControl) {
             if(!toggleButton) {
-                current_leftturret_position = current_leftturret_position - 0.05;
-                current_rightturret_position = current_rightturret_position - 0.05;
+                current_leftturret_position = current_leftturret_position + 0.05;
+                current_rightturret_position = current_rightturret_position + 0.05;
                 LeftTurret.setPosition(current_leftturret_position);
                 RightTurret.setPosition(current_rightturret_position);
                 toggleButton = true;
             }
-        }else if (gamepad2.right_bumper && current_leftturret_position < max_leftturret_position && current_rightturret_position < max_rightturret_position && manualControl) {
+        }else if (gamepad2.right_bumper && current_leftturret_position > max_leftturret_position && current_rightturret_position > max_rightturret_position && manualControl) {
             if(!toggleButton) {
-                current_leftturret_position = current_leftturret_position + 0.05;
-                current_rightturret_position = current_rightturret_position + 0.05;
+                current_leftturret_position = current_leftturret_position - 0.05;
+                current_rightturret_position = current_rightturret_position - 0.05;
                 LeftTurret.setPosition(current_leftturret_position);
                 RightTurret.setPosition(current_rightturret_position);
                 toggleButton = true;
@@ -327,7 +327,7 @@ public class ArtifactControl {
             Outtake_RightMotor.setPower(customFlyWheelPower);
         }else{
             Outtake_LeftMotor.setPower(defaultFlyWheelPower);
-            Outtake_RightMotor.setPower(defaultFlyWheelPower); //.setVelocity(defaultFlyWheelPower*targetFlyWheelSpeed)
+            Outtake_RightMotor.setPower(defaultFlyWheelPower);
         }
 
         if(wantsToThrowArtifacts && ((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed)) && !manualControl) {
@@ -466,7 +466,7 @@ public class ArtifactControl {
 
     public double getTurretAngle(){
         double angleToCm;
-        double anglePerInch = Math.abs(((max_TurretAngle-min_TurretAngle)/max_TurretAngleDistance));
+        double anglePerInch = Math.abs(((max_angleturret_position-min_angleturret_position)/max_TurretAngleDistance));
         angleToCm = basketDistance * anglePerInch;
 
         if(angleToCm > 0.7){
@@ -506,20 +506,20 @@ public class ArtifactControl {
         double servoPos = getTurretPosition();
         current_angleturret_position = 0.9 - getTurretAngle();
         if(rotateToLeft){
-            if(((leftTurret_initPosition-servoPos) >= min_leftturret_position) && ((rightTurret_initPosition-servoPos) >= min_rightturret_position)) {
-                current_leftturret_position = leftTurret_initPosition - servoPos;
-                current_rightturret_position = rightTurret_initPosition - servoPos;
-            }else{
-                current_leftturret_position = 0;
-                current_rightturret_position = 0;
-            }
-        }else{
-            if(((leftTurret_initPosition+servoPos) <= max_leftturret_position) && ((rightTurret_initPosition+servoPos) <= max_rightturret_position)) {
+            if(((leftTurret_initPosition+servoPos) <= min_leftturret_position) && ((rightTurret_initPosition+servoPos) <= min_rightturret_position)) {
                 current_leftturret_position = leftTurret_initPosition + servoPos;
                 current_rightturret_position = rightTurret_initPosition + servoPos;
             }else{
-                current_leftturret_position = 1;
-                current_rightturret_position = 1;
+                current_leftturret_position = 1.0;
+                current_rightturret_position = 1.0;
+            }
+        }else{
+            if(((leftTurret_initPosition-servoPos) >= max_leftturret_position) && ((rightTurret_initPosition-servoPos) >= max_rightturret_position)) {
+                current_leftturret_position = leftTurret_initPosition - servoPos;
+                current_rightturret_position = rightTurret_initPosition - servoPos;
+            }else{
+                current_leftturret_position = 0.0;
+                current_rightturret_position = 0.0;
             }
         }
 
@@ -538,11 +538,11 @@ public class ArtifactControl {
     void setTurretAngle(double angle, boolean rotateLeft){
         double servoPosition = angle * turretServoPosToDegree;
         if(rotateLeft){
-            current_leftturret_position = leftTurret_initPosition - servoPosition;
-            current_rightturret_position = rightTurret_initPosition - servoPosition;
-        }else{
             current_leftturret_position = leftTurret_initPosition + servoPosition;
             current_rightturret_position = rightTurret_initPosition + servoPosition;
+        }else{
+            current_leftturret_position = leftTurret_initPosition - servoPosition;
+            current_rightturret_position = rightTurret_initPosition - servoPosition;
         }
         LeftTurret.setPosition(current_leftturret_position);
         RightTurret.setPosition(current_rightturret_position);
@@ -553,7 +553,7 @@ public class ArtifactControl {
 
         distanceToBasket = getBasketDistance(x_pos,y_pos,redAlliance,true);
 
-        double anglePerInch = Math.abs(((max_TurretAngle-min_TurretAngle)/max_TurretAngleDistance));
+        double anglePerInch = Math.abs(((max_angleturret_position-min_angleturret_position)/max_TurretAngleDistance));
         double angleToCm = distanceToBasket * anglePerInch;
 
         if(angleToCm > 0.7){
