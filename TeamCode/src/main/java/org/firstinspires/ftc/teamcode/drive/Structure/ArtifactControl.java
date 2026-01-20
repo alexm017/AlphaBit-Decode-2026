@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.Structure;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.angleTurret_initPosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.angleTurret_manualPosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.horizontalTurretDeadzone;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.intakeRunTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftTurret_initPosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.marginThreshold;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.max_FlyWheelDistance;
@@ -34,6 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.ComputerVision.AprilTagIdentification;
@@ -46,6 +48,7 @@ public class ArtifactControl {
     MultipleTelemetry telemetry;
     GyroscopeBHIMU gyroscope = new GyroscopeBHIMU();
     SampleMecanumDrive drive;
+    ElapsedTime timer = new ElapsedTime();
 
     DcMotorEx Intake_LeftMotor;
     DcMotorEx Intake_RightMotor;
@@ -175,7 +178,11 @@ public class ArtifactControl {
     boolean firstTimeManual = false;
     boolean switchFromManualMode = false;
     boolean artifactToggle = false;
+    boolean oneTimeBurst = false;
+    boolean intakeRunning = false;
+    boolean oneCallToggle = false;
 
+    int burstCounter = 0;
     int forceActivationOfIntake_counter = 0;
 
     public void initServo(){
@@ -238,6 +245,8 @@ public class ArtifactControl {
             if(!artifactToggle) {
                 if (allowedToShoot && !manualControl) {
                     wantsToThrowArtifacts = true;
+                    oneTimeBurst = false;
+                    burstCounter = 0;
                     throwArtifacts(getFlyWheelPower(0, 0, false, false), true);
                     forceActivationOfIntake_counter = forceActivationOfIntake_counter + 1;
                 } else if (manualControl) {
@@ -256,6 +265,8 @@ public class ArtifactControl {
         if(gamepad2.b){
             stopIntakeOuttake();
             wantsToThrowArtifacts = false;
+            oneTimeBurst = false;
+            burstCounter = 0;
         }
 
         if (gamepad2.left_bumper && current_leftturret_position < min_leftturret_position && current_rightturret_position < min_rightturret_position && manualControl) {
@@ -343,13 +354,8 @@ public class ArtifactControl {
             Outtake_RightMotor.setPower(defaultFlyWheelPower);
         }
 
-        if(wantsToThrowArtifacts && ((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed)) && !manualControl) {
-            BlockArtifact.setPosition(artifact_unblock_position);
-            Intake_LeftMotor.setPower(1);
-            Intake_RightMotor.setPower(1);
-            artifact_status_blocked = false;
-            wantsToThrowArtifacts = false;
-            forceActivationOfIntake_counter = 0;
+        if(wantsToThrowArtifacts && !manualControl) {
+            burstShootingArtifacts();
         }else if(forceActivationOfIntake_counter >= 3){
             BlockArtifact.setPosition(artifact_unblock_position);
             Intake_LeftMotor.setPower(1);
@@ -362,6 +368,41 @@ public class ArtifactControl {
             Intake_LeftMotor.setPower(1);
             Intake_RightMotor.setPower(1);
             artifact_status_blocked = false;
+        }
+    }
+
+    public void burstShootingArtifacts(){
+        if(burstCounter < 3) {
+            if(!oneTimeBurst && ((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed)) ){
+                timer.reset();
+                oneTimeBurst = true;
+                intakeRunning = true;
+            }
+
+            if(timer.milliseconds() < intakeRunTime && intakeRunning){
+                BlockArtifact.setPosition(artifact_unblock_position);
+                Intake_LeftMotor.setPower(1);
+                Intake_RightMotor.setPower(1);
+            }else{
+                Intake_LeftMotor.setPower(0);
+                Intake_RightMotor.setPower(0);
+                BlockArtifact.setPosition(artifact_block_position);
+                artifact_status_blocked = true;
+                if(intakeRunning) {
+                    burstCounter = burstCounter + 1;
+                    intakeRunning = false;
+                }
+            }
+
+            if((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed) && oneTimeBurst && (timer.milliseconds() > intakeRunTime)){
+                oneTimeBurst = false;
+            }
+
+        }else{
+            oneTimeBurst = false;
+            burstCounter = 0;
+            wantsToThrowArtifacts = false;
+            forceActivationOfIntake_counter = 0;
         }
     }
 
