@@ -35,7 +35,7 @@ public class VarStorage {
     public static double marginThreshold = 10.0;
     public static double turretServoPosToDegree = 1.0/300.0;
     public static double max_TurretAngleDistance = 130;
-    public static double min_FlyWheelPower = 0.5;
+    public static double min_FlyWheelPower = 0.99;
     public static double max_FlyWheelPower = 1.0;
     public static double max_FlyWheelDistance = 130;
     public static double horizontalTurretDeadzone = 0.005;
