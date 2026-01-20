@@ -23,6 +23,7 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.artifact_block_position;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.artifact_unblock_position;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.targetFlyWheelSpeed;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.timeoutTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.turretServoPosToDegree;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.verticalTurretDeadzone;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.x_red_basket_angleTurret;
@@ -406,7 +407,7 @@ public class ArtifactControl {
 
     public void burstShootingArtifacts(){
         if(burstCounter < 3) {
-            if(!oneTimeBurst && ((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed)) ){
+            if(!oneTimeBurst && ((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed) || timer.milliseconds() > timeoutTime) ){
                 timer.reset();
                 oneTimeBurst = true;
                 intakeRunning = true;
@@ -433,6 +434,7 @@ public class ArtifactControl {
                 BlockArtifact.setPosition(artifact_unblock_position);
                 Intake_LeftMotor.setPower(1);
                 Intake_RightMotor.setPower(1);
+                artifact_status_blocked = false;
             }else if(timer.milliseconds() > intakeRunTime && intakeRunning && burstCounter < 2){
                 Intake_LeftMotor.setPower(0);
                 Intake_RightMotor.setPower(0);
@@ -444,7 +446,7 @@ public class ArtifactControl {
                 }
             }
 
-            if((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed) && oneTimeBurst && (timer.milliseconds() > intakeRunTime)){
+            if(((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed || Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed) && !intakeRunning && oneTimeBurst && (timer.milliseconds() > intakeRunTime) && burstCounter < 3) || (timer.milliseconds() > timeoutTime)){
                 oneTimeBurst = false;
             }
 
@@ -520,7 +522,7 @@ public class ArtifactControl {
 
         if(targetAngle - headingAngle > 0){
             basketAngle = targetAngle - headingAngle;
-            if(targetAngle - headingAngle >= 180){
+            if(basketAngle >= 180){
                 rotateToLeft = false;
             }else{
                 rotateToLeft = true;
@@ -622,16 +624,16 @@ public class ArtifactControl {
                 current_leftturret_position = leftTurret_initPosition + servoPos;
                 current_rightturret_position = rightTurret_initPosition + servoPos;
             }else{
-                current_leftturret_position = 1.0;
-                current_rightturret_position = 1.0;
+                current_leftturret_position = min_leftturret_position;
+                current_rightturret_position = min_rightturret_position;
             }
         }else{
             if(((leftTurret_initPosition-servoPos) >= max_leftturret_position) && ((rightTurret_initPosition-servoPos) >= max_rightturret_position)) {
                 current_leftturret_position = leftTurret_initPosition - servoPos;
                 current_rightturret_position = rightTurret_initPosition - servoPos;
             }else{
-                current_leftturret_position = 0.0;
-                current_rightturret_position = 0.0;
+                current_leftturret_position = max_leftturret_position;
+                current_rightturret_position = max_rightturret_position;
             }
         }
 
