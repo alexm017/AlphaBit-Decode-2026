@@ -17,6 +17,9 @@ public class TeleOp_Decode extends LinearOpMode {
     ChasisControl chasis_control;
     ArtifactControl artifactControl;
 
+    int failSafeCase = 0;
+    boolean toggleButton = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetrys = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -24,6 +27,25 @@ public class TeleOp_Decode extends LinearOpMode {
         artifactControl = new ArtifactControl(hardwareMap, gamepad2, telemetrys);
 
         while(opModeInInit()){
+            if(gamepad1.dpad_left){
+                if(!toggleButton) {
+                    failSafeCase = failSafeCase + 1;
+                    toggleButton = true;
+                }
+            }else if(gamepad1.dpad_up){
+                if(!toggleButton) {
+                    failSafeCase = failSafeCase + 2;
+                    toggleButton = true;
+                }
+            }else if(gamepad1.dpad_right) {
+                if (!toggleButton) {
+                    VarStorage.autonomous_case = failSafeCase;
+                    toggleButton = true;
+                }
+            }else{
+                toggleButton = false;
+            }
+
             telemetrys.addData("[->] Pattern ", artifactControl.artifactPattern);
             telemetrys.addData("[->] Case selected ", VarStorage.autonomous_case);
 
@@ -33,6 +55,7 @@ public class TeleOp_Decode extends LinearOpMode {
         waitForStart();
 
         artifactControl.initServo();
+        artifactControl.initRobotPose();
 
         while(opModeIsActive()){
             chasis_control.Run();

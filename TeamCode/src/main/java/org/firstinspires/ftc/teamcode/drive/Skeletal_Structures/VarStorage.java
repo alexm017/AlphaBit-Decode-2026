@@ -12,12 +12,12 @@ public class VarStorage {
     public static double angleTurret_initPosition = 0.9;
     public static double angleTurret_manualPosition = 0.7;
 
-    public static double min_leftturret_position = 1.0;
-    public static double min_rightturret_position = 1.0;
+    public static double min_leftturret_position = 0.0;
+    public static double min_rightturret_position = 0.0;
     public static double min_angleturret_position = 0.95;
 
-    public static double max_leftturret_position = 0.0;
-    public static double max_rightturret_position = 0.0;
+    public static double max_leftturret_position = 1.0;
+    public static double max_rightturret_position = 1.0;
     public static double max_angleturret_position = 0.15;
 
     public static double artifact_block_position = 0.9;

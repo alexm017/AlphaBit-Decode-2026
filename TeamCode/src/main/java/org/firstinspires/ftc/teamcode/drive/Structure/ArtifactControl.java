@@ -104,25 +104,6 @@ public class ArtifactControl {
 
         drive = new SampleMecanumDrive(hwdmap);
 
-        switch(VarStorage.autonomous_case){
-            case 0:
-                drive.setPoseEstimate(endPose_RedAudience);
-                break;
-            case 1:
-                drive.setPoseEstimate(endPose_BlueAudience);
-                break;
-            case 2:
-                drive.setPoseEstimate(endPose_RedBasket);
-                break;
-            case 3:
-                drive.setPoseEstimate(endPose_BlueBasket);
-                break;
-        }
-
-        if(VarStorage.autonomous_case == 0 || VarStorage.autonomous_case == 2){
-            isRedAlliance = true;
-        }
-
         Intake_LeftMotor = hwdmap.get(DcMotorEx.class, "Intake_LeftMotor");
         Intake_RightMotor = hwdmap.get(DcMotorEx.class, "Intake_RightMotor");
 
@@ -201,6 +182,27 @@ public class ArtifactControl {
 
         gyroscope.resetHeading();
         pushArtifact = false;
+    }
+
+    public void initRobotPose(){
+        switch(VarStorage.autonomous_case){
+            case 0:
+                drive.setPoseEstimate(endPose_RedAudience);
+                break;
+            case 1:
+                drive.setPoseEstimate(endPose_BlueAudience);
+                break;
+            case 2:
+                drive.setPoseEstimate(endPose_RedBasket);
+                break;
+            case 3:
+                drive.setPoseEstimate(endPose_BlueBasket);
+                break;
+        }
+
+        if(VarStorage.autonomous_case == 0 || VarStorage.autonomous_case == 2){
+            isRedAlliance = true;
+        }
     }
 
     public void updateAprilTag(){
@@ -620,15 +622,15 @@ public class ArtifactControl {
         double servoPos = getTurretPosition();
         current_angleturret_position = 0.9 - getTurretAngle();
         if(rotateToLeft){
-            if(((leftTurret_initPosition+servoPos) <= min_leftturret_position) && ((rightTurret_initPosition+servoPos) <= min_rightturret_position)) {
+            if(((leftTurret_initPosition+servoPos) <= max_leftturret_position) && ((rightTurret_initPosition+servoPos) <= max_rightturret_position)) {
                 current_leftturret_position = leftTurret_initPosition + servoPos;
                 current_rightturret_position = rightTurret_initPosition + servoPos;
             }else{
-                current_leftturret_position = min_leftturret_position;
-                current_rightturret_position = min_rightturret_position;
+                current_leftturret_position = max_leftturret_position;
+                current_rightturret_position = max_rightturret_position;
             }
         }else{
-            if(((leftTurret_initPosition-servoPos) >= max_leftturret_position) && ((rightTurret_initPosition-servoPos) >= max_rightturret_position)) {
+            if(((leftTurret_initPosition-servoPos) >= min_leftturret_position) && ((rightTurret_initPosition-servoPos) >= min_rightturret_position)) {
                 current_leftturret_position = leftTurret_initPosition - servoPos;
                 current_rightturret_position = rightTurret_initPosition - servoPos;
             }else{
