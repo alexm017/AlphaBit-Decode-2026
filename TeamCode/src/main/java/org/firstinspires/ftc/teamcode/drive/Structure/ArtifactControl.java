@@ -261,6 +261,7 @@ public class ArtifactControl {
                     wantsToThrowArtifacts = true;
                     oneTimeBurst = false;
                     burstCounter = 0;
+                    timer.reset();
                     throwArtifacts(getFlyWheelPower(0, 0, false, false), true);
                     forceActivationOfIntake_counter = forceActivationOfIntake_counter + 1;
                 } else if (manualControl) {
@@ -375,6 +376,7 @@ public class ArtifactControl {
         Intake_LeftMotor.setPower(1);
         Intake_RightMotor.setPower(1);
         artifact_status_blocked = true;
+        pushArtifact = false;
     }
 
     public void throwArtifacts(double customFlyWheelPower, boolean useCustomPower){
@@ -409,7 +411,7 @@ public class ArtifactControl {
 
     public void burstShootingArtifacts(){
         if(burstCounter < 3) {
-            if(!oneTimeBurst && ((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed) || (Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed) || timer.milliseconds() > timeoutTime) ){
+            if(!oneTimeBurst && ((Outtake_LeftMotor.getVelocity() > targetFlyWheelSpeed || Outtake_RightMotor.getVelocity() > targetFlyWheelSpeed) || timer.milliseconds() > timeoutTime) ){
                 timer.reset();
                 oneTimeBurst = true;
                 intakeRunning = true;
@@ -420,12 +422,13 @@ public class ArtifactControl {
                 Intake_LeftMotor.setPower(1);
                 Intake_RightMotor.setPower(1);
                 PushArtifactServo.setPosition(pushArtifact_push_position);
+                artifact_status_blocked = false;
+                pushArtifact = true;
             }else if(burstCounter == 2 && intakeRunning && timer.milliseconds() > intakeMaxIdleRunTime){
-                Intake_LeftMotor.setPower(0);
-                Intake_RightMotor.setPower(0);
                 BlockArtifact.setPosition(artifact_block_position);
                 PushArtifactServo.setPosition(pushArtifact_retract_position);
                 artifact_status_blocked = true;
+                pushArtifact = false;
                 if(intakeRunning) {
                     burstCounter = burstCounter + 1;
                     intakeRunning = false;
@@ -457,6 +460,7 @@ public class ArtifactControl {
             burstCounter = 0;
             wantsToThrowArtifacts = false;
             forceActivationOfIntake_counter = 0;
+            stopIntakeOuttake();
         }
     }
 

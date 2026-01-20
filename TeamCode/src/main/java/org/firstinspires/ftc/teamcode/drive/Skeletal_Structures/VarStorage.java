@@ -43,7 +43,7 @@ public class VarStorage {
     public static double horizontalTurretDeadzone = 0.005;
     public static double verticalTurretDeadzone = 0.003;
     public static double targetFlyWheelSpeed = 1700.0;
-    public static double intakeRunTime = 100.0;
-    public static double intakeMaxIdleRunTime = 1500.0;
+    public static double intakeRunTime = 500.0;
+    public static double intakeMaxIdleRunTime = 1000.0;
     public static double timeoutTime = 2000.0;
 }
