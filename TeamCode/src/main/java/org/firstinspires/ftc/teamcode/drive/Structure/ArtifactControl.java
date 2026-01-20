@@ -282,7 +282,7 @@ public class ArtifactControl {
             pushArtifact = false;
         }
 
-        if(gamepad2.x && manualControl){
+        if(gamepad2.x){
             if(!pushArtifactToggle){
                 if(!pushArtifact){
                     PushArtifactServo.setPosition(pushArtifact_push_position);
@@ -392,6 +392,7 @@ public class ArtifactControl {
             Intake_RightMotor.setPower(1);
             artifact_status_blocked = false;
             wantsToThrowArtifacts = false;
+            pushArtifact = false;
             forceActivationOfIntake_counter = 0;
         } else if(manualControl){
             BlockArtifact.setPosition(artifact_unblock_position);
@@ -399,6 +400,7 @@ public class ArtifactControl {
             Intake_LeftMotor.setPower(1);
             Intake_RightMotor.setPower(1);
             artifact_status_blocked = false;
+            pushArtifact = false;
         }
     }
 
