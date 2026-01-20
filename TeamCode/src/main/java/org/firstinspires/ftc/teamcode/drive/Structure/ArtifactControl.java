@@ -174,6 +174,9 @@ public class ArtifactControl {
     boolean oneTimeRumble = false;
     boolean firstTimeManual = false;
     boolean switchFromManualMode = false;
+    boolean artifactToggle = false;
+
+    int forceActivationOfIntake_counter = 0;
 
     public void initServo(){
         AngleTurret.setPosition(angleTurret_initPosition);
@@ -227,14 +230,23 @@ public class ArtifactControl {
         }
 
         if(gamepad2.a){
-            getArtifacts();
-        }else if(gamepad2.y){
-            if(allowedToShoot && !manualControl) {
-                wantsToThrowArtifacts = true;
-                throwArtifacts(getFlyWheelPower(0,0,false,false), true);
-            }else if(manualControl){
-                throwArtifacts(0, false);
+            if(!artifactToggle) {
+                getArtifacts();
+                artifactToggle = true;
             }
+        }else if(gamepad2.y){
+            if(!artifactToggle) {
+                if (allowedToShoot && !manualControl) {
+                    wantsToThrowArtifacts = true;
+                    throwArtifacts(getFlyWheelPower(0, 0, false, false), true);
+                    forceActivationOfIntake_counter = forceActivationOfIntake_counter + 1;
+                } else if (manualControl) {
+                    throwArtifacts(0, false);
+                }
+                artifactToggle = true;
+            }
+        }else{
+            artifactToggle = false;
         }
 
         if(wantsToThrowArtifacts){
@@ -337,7 +349,15 @@ public class ArtifactControl {
             Intake_RightMotor.setPower(1);
             artifact_status_blocked = false;
             wantsToThrowArtifacts = false;
-        }else if(manualControl){
+            forceActivationOfIntake_counter = 0;
+        }else if(forceActivationOfIntake_counter >= 3){
+            BlockArtifact.setPosition(artifact_unblock_position);
+            Intake_LeftMotor.setPower(1);
+            Intake_RightMotor.setPower(1);
+            artifact_status_blocked = false;
+            wantsToThrowArtifacts = false;
+            forceActivationOfIntake_counter = 0;
+        } else if(manualControl){
             BlockArtifact.setPosition(artifact_unblock_position);
             Intake_LeftMotor.setPower(1);
             Intake_RightMotor.setPower(1);
