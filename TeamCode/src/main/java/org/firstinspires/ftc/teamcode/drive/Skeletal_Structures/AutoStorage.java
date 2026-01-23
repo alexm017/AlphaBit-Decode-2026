@@ -20,16 +20,16 @@ public class AutoStorage {
     public static double RB_startPickupMiddlePattern_Y = 25.0;
 
     public static double RB_getMiddlePattern_X = 12.0;
-    public static double RB_getMiddlePattern_Y = 45.0;
+    public static double RB_getMiddlePattern_Y = 43.0;
 
     public static double RB_openTunnel_X = 4.0;
-    public static double RB_openTunnel_Y = 52.0;
+    public static double RB_openTunnel_Y = 49.0;
 
     public static double RB_returnTunnel_X = 4.0;
     public static double RB_returnTunnel_Y = 25.0;
 
     public static double RB_getFirstPattern_X = -12.0;
-    public static double RB_getFirstPattern_Y = 45.0;
+    public static double RB_getFirstPattern_Y = 43.0;
 
     public static double RB_lastShooting_X = -20.0;
     public static double RB_lastShooting_Y = 25.0;
@@ -42,16 +42,16 @@ public class AutoStorage {
     public static double BB_startPickupMiddlePattern_Y = -25.0;
 
     public static double BB_getMiddlePattern_X = 12.0;
-    public static double BB_getMiddlePattern_Y = -45.0;
+    public static double BB_getMiddlePattern_Y = -43.0;
 
     public static double BB_openTunnel_X = 4.0;
-    public static double BB_openTunnel_Y = -52.0;
+    public static double BB_openTunnel_Y = -49.0;
 
     public static double BB_returnTunnel_X = 4.0;
     public static double BB_returnTunnel_Y = -25.0;
 
     public static double BB_getFirstPattern_X = -12.0;
-    public static double BB_getFirstPattern_Y = -45.0;
+    public static double BB_getFirstPattern_Y = -43.0;
 
     public static double BB_lastShooting_X = -20.0;
     public static double BB_lastShooting_Y = -25.0;
@@ -62,16 +62,16 @@ public class AutoStorage {
     public static double RA_preparePickup_Y = 25.0;
 
     public static double RA_getArtifact_X = 36.0;
-    public static double RA_getArtifact_Y = 45.0;
+    public static double RA_getArtifact_Y = 43.0;
 
     public static double RA_mainShooting_X = 59.0;
     public static double RA_mainShooting_Y = 20.0;
 
     public static double RA_cyclePath_X = 59.0;
-    public static double RA_cyclePath_Y = 54.0;
+    public static double RA_cyclePath_Y = 51.0;
 
     public static double RA_getCornerArtifact_X = 60.2;
-    public static double RA_getCornerArtifact_Y = 59.0;
+    public static double RA_getCornerArtifact_Y = 55.0;
 
 
     // BLUE AUDIENCE
@@ -80,16 +80,16 @@ public class AutoStorage {
     public static double BA_preparePickup_Y = -25.0;
 
     public static double BA_getArtifact_X = 36.0;
-    public static double BA_getArtifact_Y = -45.0;
+    public static double BA_getArtifact_Y = -43.0;
 
     public static double BA_mainShooting_X = 59.0;
     public static double BA_mainShooting_Y = -20.0;
 
     public static double BA_cyclePath_X = 59.0;
-    public static double BA_cyclePath_Y = -54.0;
+    public static double BA_cyclePath_Y = -51.0;
 
-    public static double BA_getCornerArtifact_X = 60.2;
-    public static double BA_getCornerArtifact_Y = -57.0;
+    public static double BA_getCornerArtifact_X = 60.0;
+    public static double BA_getCornerArtifact_Y = -53.0;
 
 
 }

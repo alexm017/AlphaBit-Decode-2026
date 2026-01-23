@@ -74,7 +74,7 @@ public class AutonomousControl extends LinearOpMode {
     ArtifactControl artifactControl;
     TrajectorySequence trajectoryRedBasket, trajectoryBlueBasket, trajectoryRedAudience, trajectoryBlueAudience;
 
-    Pose2d startPose_RedBasket = new Pose2d(-57, 45, Math.toRadians(126.5));
+    Pose2d startPose_RedBasket = new Pose2d(-57, 43, Math.toRadians(126.5));
     Pose2d startPose_BlueBasket = new Pose2d(-57, -43, Math.toRadians(-126.5));
     Pose2d startPose_RedAudience = new Pose2d(60.5, 11, Math.toRadians(90));
     Pose2d startPose_BlueAudience = new Pose2d(60.5, -11, Math.toRadians(-90));
