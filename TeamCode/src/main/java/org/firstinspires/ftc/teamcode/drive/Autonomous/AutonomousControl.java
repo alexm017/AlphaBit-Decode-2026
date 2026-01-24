@@ -77,7 +77,7 @@ public class AutonomousControl extends LinearOpMode {
     Pose2d startPose_RedBasket = new Pose2d(-57, 43, Math.toRadians(126.5));
     Pose2d startPose_BlueBasket = new Pose2d(-57, -43, Math.toRadians(-126.5));
     Pose2d startPose_RedAudience = new Pose2d(60.5, 11, Math.toRadians(90));
-    Pose2d startPose_BlueAudience = new Pose2d(60.5, -11, Math.toRadians(-90));
+    Pose2d startPose_BlueAudience = new Pose2d(60.5, -10, Math.toRadians(-90));
 
     boolean blueAlliance = false;
     boolean nearBasket = false;
@@ -86,6 +86,7 @@ public class AutonomousControl extends LinearOpMode {
     boolean patternFound = false;
     int autoCase = 0;
     int currentId = 0;
+    boolean redAlliance = false;
 
     enum ObeliskPattern{
         UNKNOWN,
@@ -107,68 +108,73 @@ public class AutonomousControl extends LinearOpMode {
         trajectoryRedBasket = drive.trajectorySequenceBuilder(startPose_RedBasket)
                 .lineToLinearHeading(new Pose2d(RB_mainShooting_X, RB_mainShooting_Y, Math.toRadians(90)))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(2)
+//                .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
-                .waitSeconds(8)
+                .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
                 .lineTo(new Vector2d(RB_startPickupMiddlePattern_X,RB_startPickupMiddlePattern_Y))
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(RB_getMiddlePattern_X,RB_getMiddlePattern_Y))
-                .waitSeconds(2)
+                .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
-                .lineTo(new Vector2d(RB_openTunnel_X,RB_openTunnel_Y))
-                .lineTo(new Vector2d(RB_returnTunnel_X,RB_returnTunnel_Y))
+                .lineTo(new Vector2d(13.5,35))
                 .lineTo(new Vector2d(RB_mainShooting_X,RB_mainShooting_Y))
+                .addTemporalMarker(() -> artifactControl.pushBackArtifactsBackToggle=true)
+                .addTemporalMarker(() -> artifactControl.timer.reset())
+                .waitSeconds(0.3)
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(2)
+                //.waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
-                .waitSeconds(8)
+                .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(RB_getFirstPattern_X,RB_getFirstPattern_Y))
-                .waitSeconds(2)
+                .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(RB_lastShooting_X,RB_lastShooting_Y))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_secondAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
-                .waitSeconds(2)
+                //.waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
-                .waitSeconds(8)
+                .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
                 .build();
 
         trajectoryBlueBasket = drive.trajectorySequenceBuilder(startPose_BlueBasket)
                 .lineToLinearHeading(new Pose2d(BB_mainShooting_X, BB_mainShooting_Y, Math.toRadians(-90)))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(2)
+//                .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
-                .waitSeconds(8)
+                .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
                 .lineTo(new Vector2d(BB_startPickupMiddlePattern_X,BB_startPickupMiddlePattern_Y))
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(BB_getMiddlePattern_X,BB_getMiddlePattern_Y))
-                .waitSeconds(2)
+                .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
-                .lineTo(new Vector2d(BB_openTunnel_X,BB_openTunnel_Y))
-                .lineTo(new Vector2d(BB_returnTunnel_X,BB_returnTunnel_Y))
+                .lineTo(new Vector2d(13.5,-35))
                 .lineTo(new Vector2d(BB_mainShooting_X,BB_mainShooting_Y))
+                .addTemporalMarker(() -> artifactControl.pushBackArtifactsBackToggle=true)
+                .addTemporalMarker(() -> artifactControl.timer.reset())
+                .waitSeconds(0.3)
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(2)
+                //.waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
-                .waitSeconds(8)
+                .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
                 .addTemporalMarker(() -> artifactControl.getArtifacts())
                 .lineTo(new Vector2d(BB_getFirstPattern_X,BB_getFirstPattern_Y))
-                .waitSeconds(2)
+                .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(BB_lastShooting_X,BB_lastShooting_Y))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_secondAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
-                .waitSeconds(2)
+                //.waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
-                .waitSeconds(8)
+                .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
                 .build();
 
         trajectoryBlueAudience = drive.trajectorySequenceBuilder(startPose_BlueAudience)
+                .lineToLinearHeading(new Pose2d(48,-12, Math.toRadians(-90)))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
@@ -200,6 +206,7 @@ public class AutonomousControl extends LinearOpMode {
                 .build();
 
         trajectoryRedAudience = drive.trajectorySequenceBuilder(startPose_RedAudience)
+                .lineToLinearHeading(new Pose2d(48,9, Math.toRadians(90)))
                 .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
@@ -290,6 +297,10 @@ public class AutonomousControl extends LinearOpMode {
 
         waitForStart();
 
+        if(autoCase == 0 || autoCase == 2){
+            redAlliance = true;
+        }
+
         VarStorage.autonomous_case = autoCase;
         if(!nearBasket && patternFound){
             VarStorage.artifacts_pattern = currentId;
@@ -318,7 +329,11 @@ public class AutonomousControl extends LinearOpMode {
             drive.update();
 
             if(artifactControl.wantsToThrowArtifacts) {
-                artifactControl.throwArtifacts(0, false, true);
+                artifactControl.throwArtifacts(artifactControl.getFlyWheelPower(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),redAlliance,true), true, true);
+            }
+
+            if(artifactControl.pushBackArtifactsBackToggle){
+                artifactControl.pushArtifactsBack();
             }
 
             if(!patternFound){

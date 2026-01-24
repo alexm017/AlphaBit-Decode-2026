@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.intakeMaxIdleRunTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.intakeRunTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.intakeRunTimeManual;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftDirectionAutoTurretOffset;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftTurretSafePosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftTurret_initPosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.marginThreshold;
@@ -18,6 +19,7 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.min_TurretAngleAuto;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.pushArtifact_push_position;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.pushArtifact_retract_position;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.pushBackTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.reductionPercentage;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightDirectionAutoTurretOffset;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightDirectionManualTurretOffset;
@@ -179,10 +181,10 @@ public class ArtifactControl {
     boolean intakeRunning = false;
     boolean pushArtifactToggle = false;
     public boolean pushArtifact = false;
-    public boolean universalFlyWheelToggle = false;
     boolean tempThrowing = false;
     int tempCounter = 0;
     boolean generalManualModeCall = false;
+    public boolean pushBackArtifactsBackToggle = false;
 
     public int burstCounter = 0;
     public int forceActivationOfIntake_counter = 0;
@@ -275,13 +277,18 @@ public class ArtifactControl {
                 getArtifacts();
                 artifactToggle = true;
             }
-        }else if(gamepad2.y){
+        }else if(gamepad2.dpad_up || gamepad2.dpad_right || gamepad2.dpad_down){
             if(!artifactToggle) {
                 if (allowedToShoot && !manualControl) {
                     wantsToThrowArtifacts = true;
-                    universalFlyWheelToggle = true;
                     oneTimeBurst = false;
-                    burstCounter = 0;
+                    if(gamepad2.dpad_up){
+                        burstCounter = 0;
+                    }else if(gamepad2.dpad_right){
+                        burstCounter = 1;
+                    }else if(gamepad2.dpad_down){
+                        burstCounter = 2;
+                    }
 
                     if(forceActivationOfIntake_counter == 0) {
                         timer.reset();
@@ -290,8 +297,7 @@ public class ArtifactControl {
                     forceActivationOfIntake_counter = forceActivationOfIntake_counter + 1;
 
                     throwArtifacts(getFlyWheelPower(0, 0, false, false), true, false);
-                } else if (manualControl) {
-                    universalFlyWheelToggle = true;
+                } else if (manualControl && gamepad2.dpad_up) {
                     tempCounter = tempCounter + 1;
                     generalManualModeCall = true;
                     if(tempCounter > 1){
@@ -302,8 +308,19 @@ public class ArtifactControl {
                 }
                 artifactToggle = true;
             }
-        }else{
+        }else if(gamepad2.y){
+            if(!artifactToggle) {
+                timer.reset();
+                pushBackArtifactsBackToggle = true;
+                pushArtifactsBack();
+                artifactToggle = true;
+            }
+        } else{
             artifactToggle = false;
+        }
+
+        if(pushBackArtifactsBackToggle){
+            pushArtifactsBack();
         }
 
         if(generalManualModeCall){
@@ -325,6 +342,7 @@ public class ArtifactControl {
             pushArtifact = false;
             tempCounter = 0;
             tempThrowing = false;
+            generalManualModeCall = false;
         }
 
         if(gamepad2.x){
@@ -429,11 +447,9 @@ public class ArtifactControl {
 
             Outtake_LeftMotor.setPower(finalFlyWheelPower);
             Outtake_RightMotor.setPower(finalFlyWheelPower);
-            universalFlyWheelToggle = false;
         }else{
             Outtake_LeftMotor.setPower(defaultFlyWheelPower);
             Outtake_RightMotor.setPower(defaultFlyWheelPower);
-            universalFlyWheelToggle = false;
         }
 
         if(autonomousMode && wantsToThrowArtifacts){
@@ -473,6 +489,21 @@ public class ArtifactControl {
             if(tempCounter >= 4 && timer.milliseconds() > intakeRunTimeManual){
                 generalManualModeCall = false;
             }
+        }
+    }
+
+    public void pushArtifactsBack(){
+        if(timer.milliseconds() < pushBackTime && pushBackArtifactsBackToggle){
+            Outtake_RightMotor.setPower(-0.4);
+            Outtake_LeftMotor.setPower(-0.4);
+            Intake_RightMotor.setPower(-1);
+            Intake_LeftMotor.setPower(-1);
+        }else{
+            Outtake_RightMotor.setPower(0);
+            Outtake_LeftMotor.setPower(0);
+            Intake_RightMotor.setPower(0);
+            Intake_LeftMotor.setPower(0);
+            pushBackArtifactsBackToggle = false;
         }
     }
 
@@ -669,7 +700,7 @@ public class ArtifactControl {
         if(!useCustomPos) {
             distance = basketDistance-15.55;
         }else{
-            distance = getBasketDistance(custom_x_pos, custom_y_pos, redAlliance, true);
+            distance = getBasketDistance(custom_x_pos, custom_y_pos, redAlliance, true)-15.55;
         }
 
         double finalPower = min_FlyWheelPower + (distance * powerPerInch);
@@ -698,8 +729,8 @@ public class ArtifactControl {
         current_angleturret_position = 0.8 - getTurretAngle();
         if(rotateToLeft){
             if(((leftTurret_initPosition+servoPos) <= max_leftturret_position) && ((rightTurret_initPosition+servoPos) <= max_rightturret_position)) {
-                current_leftturret_position = leftTurret_initPosition + servoPos;
-                current_rightturret_position = rightTurret_initPosition + servoPos;
+                current_leftturret_position = leftTurret_initPosition + servoPos + leftDirectionAutoTurretOffset;
+                current_rightturret_position = rightTurret_initPosition + servoPos + leftDirectionAutoTurretOffset;
             }else{
                 current_leftturret_position = max_leftturret_position;
                 current_rightturret_position = max_rightturret_position;
@@ -745,8 +776,8 @@ public class ArtifactControl {
             current_leftturret_position = leftTurret_initPosition + servoPosition;
             current_rightturret_position = rightTurret_initPosition + servoPosition;
         }else{
-            current_leftturret_position = leftTurret_initPosition - servoPosition;
-            current_rightturret_position = rightTurret_initPosition - servoPosition;
+            current_leftturret_position = leftTurret_initPosition - servoPosition + rightDirectionAutoTurretOffset;
+            current_rightturret_position = rightTurret_initPosition - servoPosition + rightDirectionAutoTurretOffset;
         }
         LeftTurret.setPosition(current_leftturret_position);
         RightTurret.setPosition(current_rightturret_position);
@@ -757,8 +788,8 @@ public class ArtifactControl {
 
         distanceToBasket = getBasketDistance(x_pos,y_pos,redAlliance,true);
 
-        double anglePerInch = Math.abs(((max_angleturret_position-min_angleturret_position)/max_TurretAngleDistance));
-        double angleToCm = distanceToBasket * anglePerInch;
+        double anglePerInch = Math.abs(((max_TurretAngleAuto-min_TurretAngleAuto)/max_TurretAngleDistance));
+        double angleToCm = (distanceToBasket-15.55) * anglePerInch;
 
         if(angleToCm > 0.7){
             angleToCm = 0.7;
@@ -776,7 +807,6 @@ public class ArtifactControl {
 
     public void setAutonomousThrowFlags(){
         wantsToThrowArtifacts = true;
-        universalFlyWheelToggle = true;
 
         oneTimeBurst = false;
         burstCounter = 0;
@@ -794,7 +824,6 @@ public class ArtifactControl {
 
     public void setAutonomousResetFlags(){
         wantsToThrowArtifacts = false;
-        universalFlyWheelToggle = false;
 
         oneTimeBurst = false;
         intakeRunning = false;

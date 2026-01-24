@@ -56,5 +56,7 @@ public class VarStorage {
     public static double defaultFlyWheelSafePower = 0.65;
     public static double rightDirectionAutoTurretOffset = 0.035;
     public static double rightDirectionManualTurretOffset = 0.015;
+    public static double leftDirectionAutoTurretOffset = 0.000;
     public static double reductionPercentage = 0.92;
+    public static double pushBackTime = 70.0;
 }
