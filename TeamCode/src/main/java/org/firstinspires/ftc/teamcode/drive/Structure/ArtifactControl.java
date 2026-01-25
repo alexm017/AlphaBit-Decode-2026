@@ -277,18 +277,12 @@ public class ArtifactControl {
                 getArtifacts();
                 artifactToggle = true;
             }
-        }else if(gamepad2.dpad_up || gamepad2.dpad_right || gamepad2.dpad_down){
+        }else if(gamepad2.y){
             if(!artifactToggle) {
                 if (allowedToShoot && !manualControl) {
                     wantsToThrowArtifacts = true;
                     oneTimeBurst = false;
-                    if(gamepad2.dpad_up){
-                        burstCounter = 0;
-                    }else if(gamepad2.dpad_right){
-                        burstCounter = 1;
-                    }else if(gamepad2.dpad_down){
-                        burstCounter = 2;
-                    }
+                    burstCounter = 0;
 
                     if(forceActivationOfIntake_counter == 0) {
                         timer.reset();
@@ -308,7 +302,7 @@ public class ArtifactControl {
                 }
                 artifactToggle = true;
             }
-        }else if(gamepad2.y){
+        }else if(gamepad2.right_stick_button){
             if(!artifactToggle) {
                 timer.reset();
                 pushBackArtifactsBackToggle = true;
