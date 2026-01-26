@@ -441,7 +441,7 @@ public class ArtifactControl {
     public void throwArtifacts(double customFlyWheelPower, boolean useCustomPower, boolean autonomousMode){
         if(useCustomPower) {
             double finalFlyWheelPower = customFlyWheelPower;
-            if(burstCounter == 0){
+            if(burstCounter == 0 && !manualControl){
                 finalFlyWheelPower = customFlyWheelPower * reductionPercentage;
             }
 

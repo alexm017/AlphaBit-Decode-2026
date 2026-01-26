@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.ComputerVision;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -37,6 +38,8 @@ public class AprilTagIdentification {
         builder.addProcessor(aprilTagProcessor);
 
         visionPortal = builder.build();
+
+        FtcDashboard.getInstance().startCameraStream(visionPortal, 30);
     }
 
     public int getPatternId(){
