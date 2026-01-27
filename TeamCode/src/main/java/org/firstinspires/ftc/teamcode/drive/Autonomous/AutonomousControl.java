@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.AutoStorage.Audience_firstAngle;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.AutoStorage.Audience_firstAngleTurret;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.AutoStorage.Audience_secondAngle;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.AutoStorage.Audience_secondAngleTurret;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.AutoStorage.BA_cyclePath_X;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.AutoStorage.BA_cyclePath_Y;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.AutoStorage.BA_getArtifact_X;
@@ -107,7 +109,7 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryRedBasket = drive.trajectorySequenceBuilder(startPose_RedBasket)
                 .lineToLinearHeading(new Pose2d(RB_mainShooting_X, RB_mainShooting_Y, Math.toRadians(90)))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true,false))
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
@@ -121,7 +123,7 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.pushBackArtifactsBackToggle=true)
                 .addTemporalMarker(() -> artifactControl.timer.reset())
                 .waitSeconds(0.3)
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true,false))
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
@@ -130,7 +132,7 @@ public class AutonomousControl extends LinearOpMode {
                 .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(RB_lastShooting_X,RB_lastShooting_Y))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_secondAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_secondAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true,false))
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
@@ -138,7 +140,7 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryBlueBasket = drive.trajectorySequenceBuilder(startPose_BlueBasket)
                 .lineToLinearHeading(new Pose2d(BB_mainShooting_X, BB_mainShooting_Y, Math.toRadians(-90)))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false,false))
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
@@ -152,7 +154,7 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.pushBackArtifactsBackToggle=true)
                 .addTemporalMarker(() -> artifactControl.timer.reset())
                 .waitSeconds(0.3)
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false,false))
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
@@ -161,7 +163,7 @@ public class AutonomousControl extends LinearOpMode {
                 .waitSeconds(0.8)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(BB_lastShooting_X,BB_lastShooting_Y))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_secondAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Basket_secondAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false,false))
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(7)
                 .addTemporalMarker(() -> artifactControl.setAutonomousResetFlags())
@@ -169,7 +171,7 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryBlueAudience = drive.trajectorySequenceBuilder(startPose_BlueAudience)
                 .lineToLinearHeading(new Pose2d(48,-12, Math.toRadians(-90)))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_firstAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_firstAngle, false,Audience_firstAngleTurret,0,false, true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(8)
@@ -180,7 +182,7 @@ public class AutonomousControl extends LinearOpMode {
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(BA_mainShooting_X, BA_mainShooting_Y))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, false,Audience_secondAngleTurret,0, false, true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(8)
@@ -192,7 +194,7 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(BA_cyclePath_X, BA_cyclePath_Y))
                 .lineTo(new Vector2d(BA_mainShooting_X, BA_mainShooting_Y))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, false, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), false))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, false,Audience_secondAngleTurret,0, false, true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(8)
@@ -201,7 +203,7 @@ public class AutonomousControl extends LinearOpMode {
 
         trajectoryRedAudience = drive.trajectorySequenceBuilder(startPose_RedAudience)
                 .lineToLinearHeading(new Pose2d(48,9, Math.toRadians(90)))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_firstAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_firstAngle, true,Audience_firstAngleTurret,0, true, true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(8)
@@ -212,7 +214,7 @@ public class AutonomousControl extends LinearOpMode {
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(RA_mainShooting_X, RA_mainShooting_Y))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, true,Audience_secondAngleTurret,0, true, true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(8)
@@ -224,7 +226,7 @@ public class AutonomousControl extends LinearOpMode {
                 .addTemporalMarker(() -> artifactControl.stopIntakeOuttake())
                 .lineTo(new Vector2d(RA_cyclePath_X, RA_cyclePath_Y))
                 .lineTo(new Vector2d(RA_mainShooting_X, RA_mainShooting_Y))
-                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, true, drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), true))
+                .addTemporalMarker(() -> artifactControl.setAutonomousShooter(Audience_secondAngle, true,Audience_secondAngleTurret,0, true, true))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> artifactControl.setAutonomousThrowFlags())
                 .waitSeconds(8)
@@ -322,8 +324,10 @@ public class AutonomousControl extends LinearOpMode {
         while(opModeIsActive()) {
             drive.update();
 
-            if(artifactControl.wantsToThrowArtifacts) {
+            if(artifactControl.wantsToThrowArtifacts && autoCase >= 2) {
                 artifactControl.throwArtifacts(artifactControl.getFlyWheelPower(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),redAlliance,true), true, true);
+            }else if(artifactControl.wantsToThrowArtifacts){
+                artifactControl.throwArtifacts(1.0, false, true);
             }
 
             if(artifactControl.pushBackArtifactsBackToggle){

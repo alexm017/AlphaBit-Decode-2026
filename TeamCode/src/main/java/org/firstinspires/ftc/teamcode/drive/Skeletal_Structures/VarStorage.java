@@ -55,4 +55,5 @@ public class VarStorage {
     public static double leftDirectionAutoTurretOffset = 0.000;
     public static double reductionPercentage = 0.92;
     public static double pushBackTime = 70.0;
+    public static double turretServoThreshold = 0.5;
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.ComputerVision;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -18,13 +19,22 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 //FTC Decode 2026 AprilTagIdentification
+@Config
 public class AprilTagIdentification {
     AprilTagProcessor aprilTagProcessor;
     VisionPortal visionPortal;
     MultipleTelemetry telemetry;
 
-    Position cameraPosition = new Position(DistanceUnit.INCH, 0, 0, 0, 0);
-    YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES, 0, -90, 0, 0);
+    public static double cameraPosition_X_Offset = -0.39;
+    public static double cameraPosition_Y_Offset = -7.57;
+    public static double cameraPosition_Z_Offset = 16.53;
+
+    public static double cameraOrientation_Yaw_Offset = 0.0;
+    public static double cameraOrientation_Pitch_Offset = -90.0;
+    public static double cameraOrientation_Roll_Offset = 0.0;
+
+    Position cameraPosition = new Position(DistanceUnit.INCH, cameraPosition_X_Offset, cameraPosition_Y_Offset, cameraPosition_Z_Offset, 0);
+    YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES, cameraOrientation_Yaw_Offset, cameraOrientation_Pitch_Offset, cameraOrientation_Roll_Offset, 0);
 
     public int detectionId = 0;
     public double robotPose_x = 0.0;
@@ -37,7 +47,7 @@ public class AprilTagIdentification {
                 .setDrawTagOutline(true)
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
-                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .setCameraPose(cameraPosition, cameraOrientation)
                 .build();
 

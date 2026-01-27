@@ -158,6 +158,8 @@ public class ArtifactControl {
     double lastVerticalPos = 2.0;
     public double leftFlyWheelSpeed = 0.0;
     public double rightFlyWheelSpeed = 0.0;
+    public double calculatedRobotPose_X = 0.0;
+    public double calculatedRobotPose_Y = 0.0;
 
     boolean toggleButton = false;
     boolean stoggleButton = false;
@@ -185,12 +187,13 @@ public class ArtifactControl {
     int tempCounter = 0;
     boolean generalManualModeCall = false;
     public boolean pushBackArtifactsBackToggle = false;
+    boolean getPoseToggle = false;
 
     public int burstCounter = 0;
     public int forceActivationOfIntake_counter = 0;
 
     public void initServo(){
-        AngleTurret.setPosition(angleTurret_initPosition);
+        AngleTurret.setPosition(angleTurretSafePosition);
         LeftTurret.setPosition(leftTurret_initPosition+rightDirectionManualTurretOffset);
         RightTurret.setPosition(rightTurret_initPosition+rightDirectionManualTurretOffset);
         PushArtifactServo.setPosition(pushArtifact_retract_position);
@@ -362,16 +365,16 @@ public class ArtifactControl {
 
         if (gamepad2.left_bumper && current_leftturret_position < max_leftturret_position && current_rightturret_position < max_rightturret_position && manualControl) {
             if(!toggleButton) {
-                current_leftturret_position = current_leftturret_position + 0.025;
-                current_rightturret_position = current_rightturret_position + 0.025;
+                current_leftturret_position = current_leftturret_position + 0.01;
+                current_rightturret_position = current_rightturret_position + 0.01;
                 LeftTurret.setPosition(current_leftturret_position);
                 RightTurret.setPosition(current_rightturret_position);
                 toggleButton = true;
             }
         }else if (gamepad2.right_bumper && current_leftturret_position > min_leftturret_position && current_rightturret_position > min_rightturret_position && manualControl) {
             if(!toggleButton) {
-                current_leftturret_position = current_leftturret_position - 0.025;
-                current_rightturret_position = current_rightturret_position - 0.025;
+                current_leftturret_position = current_leftturret_position - 0.01;
+                current_rightturret_position = current_rightturret_position - 0.01;
                 LeftTurret.setPosition(current_leftturret_position);
                 RightTurret.setPosition(current_rightturret_position);
                 toggleButton = true;
@@ -380,13 +383,13 @@ public class ArtifactControl {
             toggleButton = false;
         }
 
-        if (gamepad2.dpad_right && current_angleturret_position > max_angleturret_position && manualControl) {
+        if (gamepad2.dpad_right && current_angleturret_position-0.05 >= max_angleturret_position && manualControl) {
             if(!stoggleButton) {
                 current_angleturret_position = current_angleturret_position - 0.05;
                 AngleTurret.setPosition(current_angleturret_position);
                 stoggleButton = true;
             }
-        } else if (gamepad2.dpad_down && current_angleturret_position < min_angleturret_position && manualControl) {
+        } else if (gamepad2.dpad_down && current_angleturret_position+0.05 <= min_angleturret_position && manualControl) {
             if(!stoggleButton) {
                 current_angleturret_position = current_angleturret_position + 0.05;
                 AngleTurret.setPosition(current_angleturret_position);
@@ -426,6 +429,19 @@ public class ArtifactControl {
             }
         }else{
             manualResetPoseToggle = false;
+        }
+
+        if(gamepad2.left_stick_button){
+            if(!getPoseToggle){
+                aprilTagIdentification.getRobotPose();
+
+                calculatedRobotPose_X = aprilTagIdentification.robotPose_x;
+                calculatedRobotPose_Y = aprilTagIdentification.robotPose_y;
+
+                getPoseToggle = true;
+            }
+        }else{
+            getPoseToggle = false;
         }
     }
 
@@ -800,9 +816,17 @@ public class ArtifactControl {
         AngleTurret.setPosition(angleTurretPosition);
     }
 
-    public void setAutonomousShooter(double angle, boolean rotateLeft, double x_pos, double y_pos, boolean redAlliance){
+    void manuallySetAngleTurret(double position){
+        AngleTurret.setPosition(position);
+    }
+
+    public void setAutonomousShooter(double angle, boolean rotateLeft, double x_pos, double y_pos, boolean redAlliance, boolean audience){
         setTurretAngle(angle, rotateLeft);
-        setAngleTurretAngle(x_pos, y_pos, redAlliance);
+        if(!audience) {
+            setAngleTurretAngle(x_pos, y_pos, redAlliance);
+        }else{
+            manuallySetAngleTurret(x_pos);
+        }
     }
 
     public void setAutonomousThrowFlags(){

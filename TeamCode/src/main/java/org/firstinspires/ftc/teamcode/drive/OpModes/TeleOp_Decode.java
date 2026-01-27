@@ -88,6 +88,8 @@ public class TeleOp_Decode extends LinearOpMode {
             telemetrys.addData("[Artifact] WantsToThrowArtifacts ", artifactControl.wantsToThrowArtifacts);
             telemetrys.addData("[Artifact] Force Activate Intake Counter ", artifactControl.forceActivationOfIntake_counter);
             telemetrys.addData("[Artifact] PushArtifact ", artifactControl.pushArtifact);
+            telemetrys.addData("[Artifact] AprilTag Robot Pose X ", artifactControl.calculatedRobotPose_X);
+            telemetrys.addData("[Artifact] AprilTag Robot Pose Y ", artifactControl.calculatedRobotPose_Y);
 
             telemetrys.update();
         }

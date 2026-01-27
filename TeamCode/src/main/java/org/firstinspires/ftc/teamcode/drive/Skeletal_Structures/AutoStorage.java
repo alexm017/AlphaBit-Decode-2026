@@ -11,6 +11,9 @@ public class AutoStorage {
     public static double Audience_firstAngle = 70.0;
     public static double Audience_secondAngle = 69.0;
 
+    public static double Audience_firstAngleTurret = 0.20;
+    public static double Audience_secondAngleTurret = 0.20;
+
     // RED BASKET
 
     public static double RB_mainShooting_X = -14.0;
