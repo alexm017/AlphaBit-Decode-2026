@@ -127,9 +127,9 @@ public class ArtifactControl {
         Outtake_RightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Outtake_LeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Outtake_LeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Outtake_LeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Outtake_RightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Outtake_RightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Outtake_RightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Intake_LeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Intake_RightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
