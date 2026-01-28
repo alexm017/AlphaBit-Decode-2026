@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.ComputerVision;
 
+import android.graphics.Color;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -15,6 +16,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.opencv.Circle;
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
 
 import java.util.List;
 
@@ -24,6 +29,7 @@ public class AprilTagIdentification {
     AprilTagProcessor aprilTagProcessor;
     VisionPortal visionPortal;
     MultipleTelemetry telemetry;
+    ColorBlobLocatorProcessor colorBlobLocatorProcessor;
 
     public static double cameraPosition_X_Offset = -0.39;
     public static double cameraPosition_Y_Offset = -7.57;
@@ -39,6 +45,8 @@ public class AprilTagIdentification {
     public int detectionId = 0;
     public double robotPose_x = 0.0;
     public double robotPose_y = 0.0;
+    public double bearingAngle = 0.0;
+    public boolean locTagFound = false;
 
     public void init(HardwareMap hwdmap, MultipleTelemetry telemetrys){
         telemetry = telemetrys;
@@ -51,14 +59,30 @@ public class AprilTagIdentification {
                 .setCameraPose(cameraPosition, cameraOrientation)
                 .build();
 
+        colorBlobLocatorProcessor = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
+                .setDrawContours(true)
+                .setBoxFitColor(0)
+                .setCircleFitColor(Color.rgb(255, 255, 0))
+                .setBlurSize(5)
+
+                .setDilateSize(15)
+                .setErodeSize(15)
+                .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
+
+                .build();
+
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hwdmap.get(WebcamName.class, "AlphaBit_Webcam"));
         builder.setCameraResolution(new Size(640, 480));
         builder.addProcessor(aprilTagProcessor);
+        builder.addProcessor(colorBlobLocatorProcessor);
 
         visionPortal = builder.build();
 
-        FtcDashboard.getInstance().startCameraStream(visionPortal, 30);
+        FtcDashboard.getInstance().startCameraStream(visionPortal, 15);
     }
 
     public int getPatternId(){
@@ -74,15 +98,39 @@ public class AprilTagIdentification {
     }
 
     public void getRobotPose(){
+        locTagFound = false;
+
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
+
         for (AprilTagDetection detection : currentDetections) {
             if(detection.metadata != null){
                 if(detection.id == 20 || detection.id == 24){
                     robotPose_x = detection.robotPose.getPosition().x;
                     robotPose_y = detection.robotPose.getPosition().y;
+                    bearingAngle = detection.ftcPose.bearing;
+                    locTagFound = true;
                 }
             }
         }
+    }
+
+    public void getArtifactPose(){
+        List<ColorBlobLocatorProcessor.Blob> blobs = colorBlobLocatorProcessor.getBlobs();
+
+        ColorBlobLocatorProcessor.Util.filterByCriteria(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
+                50, 20000, blobs);
+
+        ColorBlobLocatorProcessor.Util.filterByCriteria(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY,
+                0.6, 1, blobs);
+
+        for (ColorBlobLocatorProcessor.Blob b : blobs) {
+            Circle circleFit = b.getCircle();
+            telemetry.addLine(String.format("%5.3f      %3d     (%3d,%3d)",
+                    b.getCircularity(), (int) circleFit.getRadius(), (int) circleFit.getX(), (int) circleFit.getY()));
+        }
+
     }
 
     public void telemetryAprilTag() {

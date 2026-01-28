@@ -56,4 +56,6 @@ public class VarStorage {
     public static double reductionPercentage = 0.92;
     public static double pushBackTime = 70.0;
     public static double turretServoThreshold = 0.5;
+    public static double robotVelocityThreshold = 100.0;
+    public static double robotAngularVelocityThreshold = 100.0;
 }

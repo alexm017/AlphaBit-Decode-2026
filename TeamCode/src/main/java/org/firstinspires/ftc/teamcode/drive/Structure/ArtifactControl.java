@@ -33,6 +33,8 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.max_angleturret_position;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.artifact_block_position;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.artifact_unblock_position;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.robotAngularVelocityThreshold;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.robotVelocityThreshold;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.targetFlyWheelSpeed;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.timeoutTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.turretServoPosToDegree;
@@ -44,6 +46,7 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.pedropathing.localization.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -172,6 +175,9 @@ public class ArtifactControl {
     boolean rotateToLeft = false;
     public double defaultFlyWheelPower = 1.0;
     double basketDistance = 0.0;
+    public double robotVelocity = 0.0;
+    public double robotAngleAprilTag = 0.0;
+    public double robotAngularVelocity = 0.0;
 
     boolean flyToggle = false;
     boolean toggleS = false;
@@ -188,6 +194,10 @@ public class ArtifactControl {
     boolean generalManualModeCall = false;
     public boolean pushBackArtifactsBackToggle = false;
     boolean getPoseToggle = false;
+    public boolean automatedRobotPoseReset = false;
+    public boolean isRobotStationary = false;
+    boolean autoPoseResetToggle = false;
+    boolean firstPoseReset = false;
 
     public int burstCounter = 0;
     public int forceActivationOfIntake_counter = 0;
@@ -227,6 +237,8 @@ public class ArtifactControl {
         }
     }
 
+    public void updateArtifactPose(){ aprilTagIdentification.getArtifactPose();}
+
     public void updateAprilTag(){
         aprilTagIdentification.telemetryAprilTag();
     }
@@ -247,13 +259,28 @@ public class ArtifactControl {
 
     public void Run(){
         updateAprilTag();
+        updateArtifactPose();
         drive.update();
 
         Pose2d robotPose = drive.getPoseEstimate();
+        Pose2d robotPoseVelocity = drive.getPoseVelocity();
 
         headingAngle = gyroscope.getHeading();
         x_position = robotPose.getX();
         y_position = robotPose.getY();
+
+        if(robotPoseVelocity != null) {
+            robotVelocity = Math.abs(robotPoseVelocity.getX()) + Math.abs(robotPoseVelocity.getY());
+            robotAngularVelocity = Math.abs(robotPoseVelocity.getHeading());
+
+            if(robotVelocity < robotVelocityThreshold && robotAngularVelocity < robotAngularVelocityThreshold){
+                isRobotStationary = true;
+            }else{
+                isRobotStationary = false;
+            }
+        }else{
+            isRobotStationary = false;
+        }
 
         leftFlyWheelSpeed = Outtake_LeftMotor.getVelocity();
         rightFlyWheelSpeed = Outtake_RightMotor.getVelocity();
@@ -437,15 +464,67 @@ public class ArtifactControl {
 
                 calculatedRobotPose_X = aprilTagIdentification.robotPose_x;
                 calculatedRobotPose_Y = aprilTagIdentification.robotPose_y;
+                robotAngleAprilTag = aprilTagIdentification.bearingAngle;
 
                 getPoseToggle = true;
             }
         }else{
             getPoseToggle = false;
         }
+
+        if(gamepad2.right_stick_button){
+            if(!autoPoseResetToggle){
+                automatedRobotPoseReset = !automatedRobotPoseReset;
+                autoPoseResetToggle = true;
+            }
+        }else{
+            autoPoseResetToggle = false;
+        }
+
+        if(automatedRobotPoseReset){
+            if(allowedToShoot && !manualControl && isRobotStationary){
+                if(!firstPoseReset) {
+                    aprilTagIdentification.getRobotPose();
+
+                    if(aprilTagIdentification.locTagFound) {
+
+                        calculatedRobotPose_X = aprilTagIdentification.robotPose_x;
+                        calculatedRobotPose_Y = aprilTagIdentification.robotPose_y;
+                        robotAngleAprilTag = aprilTagIdentification.bearingAngle;
+
+                        if (robotAngleAprilTag >= 0) {
+                            gyroscope.resetHeading();
+                            if (isRedAlliance) {
+                                gyroscope.setAngleOffset(36.5 - robotAngleAprilTag);
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(126.5 - robotAngleAprilTag)));
+                            } else {
+                                gyroscope.setAngleOffset(-36.5 - robotAngleAprilTag);
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(-126.5 - robotAngleAprilTag)));
+                            }
+                        } else if (robotAngleAprilTag < 0) {
+                            gyroscope.resetHeading();
+                            if (isRedAlliance) {
+                                gyroscope.setAngleOffset(36.5 + Math.abs(robotAngleAprilTag));
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(126.5 + Math.abs(robotAngleAprilTag))));
+                            } else {
+                                gyroscope.setAngleOffset(-36.5 + Math.abs(robotAngleAprilTag));
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(-126.5 + Math.abs(robotAngleAprilTag))));
+                            }
+                        }
+
+                        gamepad2.rumble(1000);
+                        firstPoseReset = true;
+                    }
+                }
+            }else{
+                firstPoseReset = false;
+            }
+        }
     }
 
     public void getArtifacts(){
+        Outtake_RightMotor.setPower(-0.4);
+        Outtake_LeftMotor.setPower(-0.4);
         BlockArtifact.setPosition(artifact_block_position);
         PushArtifactServo.setPosition(pushArtifact_retract_position);
         Intake_LeftMotor.setPower(1);
@@ -609,7 +688,7 @@ public class ArtifactControl {
         }
 
         if(allowedToShoot && !oneTimeRumble){
-            gamepad2.rumble(1000);
+            gamepad2.rumble(500);
             oneTimeRumble = true;
         }else if(!allowedToShoot && oneTimeRumble){
             gamepad2.rumble(500);
