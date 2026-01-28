@@ -23,7 +23,7 @@ public class AutoStorage {
     public static double RB_startPickupMiddlePattern_Y = 22.0;
 
     public static double RB_getMiddlePattern_X = 13.5;
-    public static double RB_getMiddlePattern_Y = 52.0;
+    public static double RB_getMiddlePattern_Y = 62.0;
 
     public static double RB_openTunnel_X = 4.0;
     public static double RB_openTunnel_Y = 47.0;
@@ -45,7 +45,7 @@ public class AutoStorage {
     public static double BB_startPickupMiddlePattern_Y = -22.0;
 
     public static double BB_getMiddlePattern_X = 13.5;
-    public static double BB_getMiddlePattern_Y = -52.0;
+    public static double BB_getMiddlePattern_Y = -62.0;
 
     public static double BB_openTunnel_X = 4.0;
     public static double BB_openTunnel_Y = -47.0;
@@ -65,7 +65,7 @@ public class AutoStorage {
     public static double RA_preparePickup_Y = 25.0;
 
     public static double RA_getArtifact_X = 36.0;
-    public static double RA_getArtifact_Y = 43.0;
+    public static double RA_getArtifact_Y = 62.0;
 
     public static double RA_mainShooting_X = 59.0;
     public static double RA_mainShooting_Y = 20.0;
@@ -83,7 +83,7 @@ public class AutoStorage {
     public static double BA_preparePickup_Y = -25.0;
 
     public static double BA_getArtifact_X = 36.0;
-    public static double BA_getArtifact_Y = -43.0;
+    public static double BA_getArtifact_Y = -62.0;
 
     public static double BA_mainShooting_X = 59.0;
     public static double BA_mainShooting_Y = -20.0;
