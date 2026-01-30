@@ -30,7 +30,7 @@ public class VarStorage {
     public static double y_red_basket_angleTurret = 48.0;
     public static double y_blue_basket_angleTurret = -48.0;
 
-    public static double marginThreshold = 11.0;
+    public static double marginThreshold = 10.5;
     public static double turretServoPosToDegree = 1.0/300.0;
     public static double max_TurretAngleAuto = 0.75;
     public static double min_TurretAngleAuto = 0.25;
@@ -41,10 +41,10 @@ public class VarStorage {
     public static double horizontalTurretDeadzone = 0.0015;
     public static double verticalTurretDeadzone = 0.0015;
     public static double targetFlyWheelSpeed = 2400.0;
-    public static double intakeRunTime = 300.0;
+    public static double intakeRunTime = 350.0;
     public static double intakeMaxIdleRunTime = 1000.0;
     public static double timeoutTime = 2000.0;
-    public static double intakeRunTimeManual = 300.0;
+    public static double intakeRunTimeManual = 350.0;
 
     public static double angleTurretSafePosition = 0.4;
     public static double leftTurretSafePosition = 0.5;

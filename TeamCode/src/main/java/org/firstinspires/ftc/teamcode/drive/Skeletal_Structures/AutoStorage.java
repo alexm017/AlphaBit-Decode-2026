@@ -28,14 +28,8 @@ public class AutoStorage {
     public static double RB_getMiddlePattern_X = 13.5;
     public static double RB_getMiddlePattern_Y = 62.0;
 
-    public static double RB_openTunnel_X = 4.0;
-    public static double RB_openTunnel_Y = 47.0;
-
-    public static double RB_returnTunnel_X = 4.0;
-    public static double RB_returnTunnel_Y = 25.0;
-
-    public static double RB_getFirstPattern_X = -12.0;
-    public static double RB_getFirstPattern_Y = 46.0;
+    public static double RB_getFirstPattern_X = -10.0;
+    public static double RB_getFirstPattern_Y = 53.0;
 
     public static double RB_lastShooting_X = -20.0;
     public static double RB_lastShooting_Y = 25.0;
@@ -49,12 +43,6 @@ public class AutoStorage {
 
     public static double BB_getMiddlePattern_X = 13.5;
     public static double BB_getMiddlePattern_Y = -62.0;
-
-    public static double BB_openTunnel_X = 4.0;
-    public static double BB_openTunnel_Y = -47.0;
-
-    public static double BB_returnTunnel_X = 4.0;
-    public static double BB_returnTunnel_Y = -25.0;
 
     public static double BB_getFirstPattern_X = -10.0;
     public static double BB_getFirstPattern_Y = -53.0;
@@ -76,11 +64,11 @@ public class AutoStorage {
     public static double RA_cyclePath_X = 57.5;
     public static double RA_cyclePath_Y = 58.5;
 
-    public static double RA_getSecondCornerArtifact_X=59.0;
-    public static double RA_getSecondCornerArtifact_Y=63.0;
+    public static double RA_getFirstAngleCornerArtifact_X = 49.0;
+    public static double RA_getFirstAngleCornerArtifact_Y = 62.0;
 
-    public static double RA_getCornerArtifact_X = 57.5;
-    public static double RA_getCornerArtifact_Y = 62.0;
+    public static double RA_getThirdAngleCornerArtifact_X=60.0;
+    public static double RA_getThirdAngleCornerArtifact_Y=62.0;
 
 
     // BLUE AUDIENCE
@@ -94,14 +82,13 @@ public class AutoStorage {
     public static double BA_mainShooting_X = 59.0;
     public static double BA_mainShooting_Y = -20.0;
 
-    public static double BA_cyclePath_X = 58.5;
+    public static double BA_cyclePath_X = 57.5;
     public static double BA_cyclePath_Y = -58.5;
 
-    public static double BA_getSecondCornerArtifact_X=63;
-    public static double BA_getSecondCornerArtifact_Y=-63.0;
+    public static double BA_getFirstAngleCornerArtifact_X = 50.0;
+    public static double BA_getFirstAngleCornerArtifact_Y = -62.0;
 
-    public static double BA_getCornerArtifact_X = 58.5;
-    public static double BA_getCornerArtifact_Y = -62.0;
-
+    public static double BA_getThirdAngleCornerArtifact_X=60.0;
+    public static double BA_getThirdAngleCornerArtifact_Y=-62.0;
 
 }

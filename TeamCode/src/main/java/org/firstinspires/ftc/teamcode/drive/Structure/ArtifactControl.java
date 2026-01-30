@@ -538,14 +538,14 @@ public class ArtifactControl {
     }
 
     public void setCustomTargetFlyWheelVelocity(double flyWheelPower){
-        currentTargetFlyWheelVelocity = (targetFlyWheelSpeed * flyWheelPower) - 75.0;
+        currentTargetFlyWheelVelocity = (targetFlyWheelSpeed * flyWheelPower) - 50.0;
     }
 
     public void throwArtifacts(double customFlyWheelPower, boolean useCustomPower, boolean autonomousMode){
         if(useCustomPower) {
             setCustomTargetFlyWheelVelocity(customFlyWheelPower);
 
-            if(Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-50.0 || Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-50.0) {
+            if(Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-50.0 || Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-75.0) {
                 Outtake_LeftMotor.setPower(customFlyWheelPower);
                 Outtake_RightMotor.setPower(customFlyWheelPower);
             }else{
@@ -561,7 +561,7 @@ public class ArtifactControl {
             if(autonomousMode){
                 setCustomTargetFlyWheelVelocity(defaultFlyWheelPowerAuto);
 
-                if(Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-50.0 || Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-50.0) {
+                if(Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-75.0 || Outtake_LeftMotor.getVelocity() > currentTargetFlyWheelVelocity-75.0) {
                     Outtake_LeftMotor.setPower(defaultFlyWheelPowerAuto);
                     Outtake_RightMotor.setPower(defaultFlyWheelPowerAuto);
                 }else{
@@ -826,7 +826,7 @@ public class ArtifactControl {
             distance = getBasketDistance(custom_x_pos, custom_y_pos, redAlliance, true)-minimumBasketDistance;
         }
 
-        double flyWheelPower = ((-3.15936e-7) * distance * distance * distance) + (0.000074273 * distance * distance) - (0.00230794 * distance) + 0.616381;
+        double flyWheelPower = ((-3.15936e-7) * distance * distance * distance) + (0.000074273 * distance * distance) - (0.00230794 * distance) + 0.626381;
 
         if(flyWheelPower > 0.87){
             flyWheelPower = 0.87;
