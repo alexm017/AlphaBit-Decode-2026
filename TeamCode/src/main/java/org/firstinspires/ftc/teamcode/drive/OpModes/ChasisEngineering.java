@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,6 +19,7 @@ public class ChasisEngineering extends LinearOpMode {
     ChasisControl chasis_control;
     ServoTesting intakeTesting;
     MotorTesting motorTesting;
+    GoBildaPinpointDriver pinpointDriver;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,6 +27,7 @@ public class ChasisEngineering extends LinearOpMode {
         chasis_control = new ChasisControl(hardwareMap, gamepad1);
         motorTesting = new MotorTesting(hardwareMap, gamepad1, telemetrys);
         intakeTesting = new ServoTesting(hardwareMap, gamepad2);
+        pinpointDriver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         waitForStart();
 
@@ -32,6 +35,12 @@ public class ChasisEngineering extends LinearOpMode {
             chasis_control.Run();
             motorTesting.Run();
             intakeTesting.Run();
+
+            pinpointDriver.update();
+            telemetry.addData("rawX", pinpointDriver.getEncoderX());
+            telemetry.addData("rawY", pinpointDriver.getEncoderY());
+            telemetry.addData("status", pinpointDriver.getDeviceStatus());
+
             telemetrys.addData("[!] Chassis on gamepad1 is ", " enabled [!]");
             telemetrys.addData("[!] Set the name in DriverHub to the Servo you want to Test as ", "ServoTest [!]");
             telemetrys.addData("[!] Set the name in DriverHub to the Motor you want to Test as ", "MotorTest [!]");
