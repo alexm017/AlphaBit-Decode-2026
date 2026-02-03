@@ -42,6 +42,7 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -50,6 +51,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drive.ComputerVision.AprilTagIdentification;
 import org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.GyroscopeBHIMU;
 import org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage;
@@ -61,6 +63,7 @@ public class ArtifactControl {
     MultipleTelemetry telemetry;
     GyroscopeBHIMU gyroscope = new GyroscopeBHIMU();
     Follower drive;
+    GoBildaPinpointDriver pinpointDriver;
     public ElapsedTime timer = new ElapsedTime();
 
     DcMotorEx Intake_LeftMotor;
@@ -112,6 +115,8 @@ public class ArtifactControl {
         }
 
         drive = Constants.createFollower(hwdmap);
+
+        pinpointDriver = hwdmap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         Intake_LeftMotor = hwdmap.get(DcMotorEx.class, "Intake_LeftMotor");
         Intake_RightMotor = hwdmap.get(DcMotorEx.class, "Intake_RightMotor");
@@ -173,6 +178,7 @@ public class ArtifactControl {
     public double robotVelocity = 0.0;
     public double robotAngleAprilTag = 0.0;
     public double currentTargetFlyWheelVelocity = targetFlyWheelSpeed;
+    public double pinpointHeading = 0.0;
 
     boolean flyToggle = false;
     boolean toggleS = false;
@@ -209,6 +215,7 @@ public class ArtifactControl {
 
     public void resetYaw(){
         gyroscope.resetHeading();
+        pinpointDriver.resetPosAndIMU();
     }
 
     public void initRobotPose(){
@@ -259,10 +266,15 @@ public class ArtifactControl {
         updateAprilTag();
         updateArtifactPose();
         drive.update();
+        pinpointDriver.update();
+
+        pinpointHeading = pinpointDriver.getHeading(AngleUnit.DEGREES);
 
         headingAngle = gyroscope.getHeading();
-        x_position = drive.getPose().getX();
-        y_position = drive.getPose().getY();
+        x_position = drive.getPose().getY();
+        y_position = drive.getPose().getX();
+
+        convertPedroToFTCCoords();
 
         robotVelocity = Math.abs(drive.getVelocity().getXComponent()) + Math.abs(drive.getVelocity().getYComponent());
 
@@ -509,6 +521,20 @@ public class ArtifactControl {
             }else{
                 firstPoseReset = false;
             }
+        }
+    }
+
+    public void convertPedroToFTCCoords(){
+        if(x_position >= 72){
+            x_position = -(x_position - 72);
+        }else if(x_position < 72){
+            x_position = Math.abs(x_position - 72);
+        }
+
+        if(y_position >= 72){
+            y_position = Math.abs(y_position - 72);
+        }else if(y_position < 72){
+            y_position = -(y_position - 72);
         }
     }
 
