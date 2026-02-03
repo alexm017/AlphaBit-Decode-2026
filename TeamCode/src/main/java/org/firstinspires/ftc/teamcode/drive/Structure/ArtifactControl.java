@@ -74,10 +74,10 @@ public class ArtifactControl {
     Servo BlockArtifact;
     Servo PushArtifactServo;
 
-    Pose endPose_RedBasket = new Pose(-20, 25, Math.toRadians(90));
-    Pose endPose_BlueBasket = new Pose(-20, -25, Math.toRadians(-90));
-    Pose endPose_RedAudience = new Pose(59, 20, Math.toRadians(90));
-    Pose endPose_BlueAudience = new Pose(59, -20, Math.toRadians(-90));
+    Pose endPose_RedBasket = new Pose(87.5, 87.5, Math.toRadians(0));
+    Pose endPose_BlueBasket = new Pose(56.5, 87.5, Math.toRadians(180));
+    Pose endPose_RedAudience = new Pose(80, 16.5, Math.toRadians(0));
+    Pose endPose_BlueAudience = new Pose(63.5, 16.5, Math.toRadians(180));
 
     double targetAngle;
     public boolean isRedAlliance = false;
@@ -486,19 +486,19 @@ public class ArtifactControl {
                             gyroscope.resetHeading();
                             if (isRedAlliance) {
                                 gyroscope.setAngleOffset(36.5 - robotAngleAprilTag);
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(126.5 - robotAngleAprilTag)));
+                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(36.5 - robotAngleAprilTag)));
                             } else {
                                 gyroscope.setAngleOffset(-36.5 - robotAngleAprilTag);
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(-126.5 - robotAngleAprilTag)));
+                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(143.5 - robotAngleAprilTag)));
                             }
                         } else if (robotAngleAprilTag < 0) {
                             gyroscope.resetHeading();
                             if (isRedAlliance) {
                                 gyroscope.setAngleOffset(36.5 + Math.abs(robotAngleAprilTag));
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(126.5 + Math.abs(robotAngleAprilTag))));
+                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(36.5 + Math.abs(robotAngleAprilTag))));
                             } else {
                                 gyroscope.setAngleOffset(-36.5 + Math.abs(robotAngleAprilTag));
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(-126.5 + Math.abs(robotAngleAprilTag))));
+                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(143.5 + Math.abs(robotAngleAprilTag))));
                             }
                         }
 
@@ -824,11 +824,11 @@ public class ArtifactControl {
 
     public void manuallyResetPose(){
         if(isRedAlliance) {
-            drive.setPose(new Pose(-55.5, 43.5, Math.toRadians(126.5)));
+            drive.setPose(new Pose(117.0, 132.0, Math.toRadians(36.5)));
             gyroscope.resetHeading();
             gyroscope.setAngleOffset(36.5);
         }else{
-            drive.setPose(new Pose(-55.5, -43.5, Math.toRadians(-126.5)));
+            drive.setPose(new Pose(27.0, 132.0, Math.toRadians(143.5)));
             gyroscope.resetHeading();
             gyroscope.setAngleOffset(-36.5);
         }
