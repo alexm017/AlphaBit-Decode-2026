@@ -72,7 +72,6 @@ public class TeleOp_Decode extends LinearOpMode {
             telemetrys.addData("[Artifact] Current Angle Turret Position ", artifactControl.current_angleturret_position);
             telemetrys.addData("[Artifact] Current Block Position ", artifactControl.artifact_status_blocked);
             telemetrys.addData("[Artifact] Current Heading Angle ", artifactControl.headingAngle);
-            telemetrys.addData("[Artifact] Current Pinpoint Heading Angle ", artifactControl.pinpointHeading);
             telemetrys.addData("[Artifact] X Position: ", artifactControl.x_position);
             telemetrys.addData("[Artifact] Y Position: ", artifactControl.y_position);
             telemetrys.addData("[Artifact] allowedToShoot ", artifactControl.allowedToShoot);
@@ -96,6 +95,16 @@ public class TeleOp_Decode extends LinearOpMode {
             telemetrys.addData("[Artifact] Robot Stationary ", artifactControl.isRobotStationary);
             telemetrys.addData("[Artifact] Automated Pose Reset ", artifactControl.automatedRobotPoseReset);
             telemetrys.addData("[Artifact] Current Target FlyWheel Velocity ", artifactControl.currentTargetFlyWheelVelocity);
+            telemetrys.addData("[Artifact] Robot Wants to Auto Shoot ", artifactControl.robotWantsToAutoShoot);
+            telemetrys.addData("[Artifact] Robot Wants to Start Intake ", artifactControl.robotWantsToStartIntake);
+            telemetrys.addData("[Artifact] leftDistanceSensor Distance ", artifactControl.leftDistanceSensor_distance);
+            telemetrys.addData("[Artifact] rightDistanceSensor Distance ", artifactControl.rightDistanceSensor_distance);
+            telemetrys.addData("[Artifact] redNorm ", artifactControl.redNorm);
+            telemetrys.addData("[Artifact] greenNorm ", artifactControl.greenNorm);
+            telemetrys.addData("[Artifact] blueNorm ", artifactControl.blueNorm);
+            telemetrys.addData("[Artifact] artifact Counter ", artifactControl.artifactCounter);
+            telemetrys.addData("[Artifact] Light intensity ", artifactControl.lightIntensity);
+            telemetrys.addData("[Artifact] generalIntakeActivaton ", artifactControl.generalIntakeActivaton);
 
             telemetrys.update();
         }

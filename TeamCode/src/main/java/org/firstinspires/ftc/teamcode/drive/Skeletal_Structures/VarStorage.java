@@ -9,7 +9,7 @@ public class VarStorage {
 
     public static double leftTurret_initPosition = 0.5;
     public static double rightTurret_initPosition = 0.5;
-    public static double angleTurret_initPosition = 0.8;
+    public static double angleTurret_initPosition = 0.45;
 
     public static double min_leftturret_position = 0.0;
     public static double min_rightturret_position = 0.0;
@@ -54,9 +54,14 @@ public class VarStorage {
     public static double rightDirectionAutoTurretOffset = 0.035;
     public static double rightDirectionManualTurretOffset = 0.015;
     public static double leftDirectionAutoTurretOffset = 0.000;
-    public static double pushBackTime = 70.0;
     public static double robotVelocityThreshold = 2.5;
     public static double robotAngularVelocityThreshold = 0.15;
     public static double minimumBasketDistance = 0.0;
     public static double flyWheelAggressiveAcceleration = 0.15;
+    public static double leftDistanceThreshold = 20.0;
+    public static double rightDistanceThreshold = 20.0;
+    public static double autoIntakeFirstArtifactTimer = 750.0;
+    public static double autoIntakeSecondArtifactTimer = 500.0;
+    public static double autoIntakeThirdArtifactTimer = 250.0;
+    public static double lightIntensityThreshold = 0.7;
 }

@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.Structure;
 
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.angleTurretSafePosition;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.autoIntakeFirstArtifactTimer;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.autoIntakeSecondArtifactTimer;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.autoIntakeThirdArtifactTimer;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.defaultFlyWheelPowerAuto;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.defaultFlyWheelSafePower;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.flyWheelAggressiveAcceleration;
@@ -9,15 +12,17 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.intakeRunTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.intakeRunTimeManual;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftDirectionAutoTurretOffset;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftDistanceThreshold;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftTurretSafePosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.leftTurret_initPosition;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.lightIntensityThreshold;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.marginThreshold;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.minimumBasketDistance;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.pushArtifact_push_position;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.pushArtifact_retract_position;
-import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.pushBackTime;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightDirectionAutoTurretOffset;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightDirectionManualTurretOffset;
+import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightDistanceThreshold;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightTurretSafePosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.rightTurret_initPosition;
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.min_leftturret_position;
@@ -40,30 +45,34 @@ import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorag
 import static org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage.y_blue_basket_angleTurret;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.ComputerVision.AprilTagIdentification;
 import org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.GyroscopeBHIMU;
 import org.firstinspires.ftc.teamcode.drive.Skeletal_Structures.VarStorage;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class ArtifactControl {
     Gamepad gamepad2;
     AprilTagIdentification aprilTagIdentification = new AprilTagIdentification();
     MultipleTelemetry telemetry;
     GyroscopeBHIMU gyroscope = new GyroscopeBHIMU();
-    Follower drive;
-    GoBildaPinpointDriver pinpointDriver;
+    SampleMecanumDrive drive;
     public ElapsedTime timer = new ElapsedTime();
 
     DcMotorEx Intake_LeftMotor;
@@ -71,16 +80,21 @@ public class ArtifactControl {
     DcMotorEx Outtake_LeftMotor;
     DcMotorEx Outtake_RightMotor;
 
+    DistanceSensor leftDistanceSensor;
+    DistanceSensor rightDistanceSensor;
+
+    NormalizedColorSensor colorSensor;
+
     Servo LeftTurret;
     Servo RightTurret;
     Servo AngleTurret;
     Servo BlockArtifact;
     Servo PushArtifactServo;
 
-    Pose endPose_RedBasket = new Pose(87.5, 87.5, Math.toRadians(0));
-    Pose endPose_BlueBasket = new Pose(56.5, 87.5, Math.toRadians(180));
-    Pose endPose_RedAudience = new Pose(80, 16.5, Math.toRadians(0));
-    Pose endPose_BlueAudience = new Pose(63.5, 16.5, Math.toRadians(180));
+    Pose2d endPose_RedBasket = new Pose2d(-20, 25, Math.toRadians(90));
+    Pose2d endPose_BlueBasket = new Pose2d(-20, -25, Math.toRadians(-90));
+    Pose2d endPose_RedAudience = new Pose2d(59, 20, Math.toRadians(90));
+    Pose2d endPose_BlueAudience = new Pose2d(59, -20, Math.toRadians(-90));
 
     double targetAngle;
     public boolean isRedAlliance = false;
@@ -114,9 +128,7 @@ public class ArtifactControl {
             }
         }
 
-        drive = Constants.createFollower(hwdmap);
-
-        pinpointDriver = hwdmap.get(GoBildaPinpointDriver.class, "pinpoint");
+        drive = new SampleMecanumDrive(hwdmap);
 
         Intake_LeftMotor = hwdmap.get(DcMotorEx.class, "Intake_LeftMotor");
         Intake_RightMotor = hwdmap.get(DcMotorEx.class, "Intake_RightMotor");
@@ -147,6 +159,11 @@ public class ArtifactControl {
         BlockArtifact = hwdmap.get(Servo.class,"BlockArtifact");
 
         PushArtifactServo = hwdmap.get(Servo.class, "PushLastArtifact");
+
+        leftDistanceSensor = hwdmap.get(DistanceSensor.class, "leftDistanceSensor");
+        rightDistanceSensor = hwdmap.get(DistanceSensor.class, "rightDistanceSensor");
+
+        colorSensor = hwdmap.get(NormalizedColorSensor.class, "colorSensor");
     }
 
     public double current_rightturret_position= rightTurret_initPosition + rightDirectionManualTurretOffset;
@@ -176,9 +193,16 @@ public class ArtifactControl {
     public double defaultFlyWheelPower = defaultFlyWheelSafePower;
     double basketDistance = 0.0;
     public double robotVelocity = 0.0;
+    public double robotAngularVelocity = 0.0;
     public double robotAngleAprilTag = 0.0;
     public double currentTargetFlyWheelVelocity = targetFlyWheelSpeed;
-    public double pinpointHeading = 0.0;
+    public double leftDistanceSensor_distance = 0.0;
+    public double rightDistanceSensor_distance = 0.0;
+    public double redNorm = 0.0;
+    public double greenNorm = 0.0;
+    public double blueNorm = 0.0;
+    public double lightIntensity = 0.0;
+    double targetIntakeTime = 0.0;
 
     boolean flyToggle = false;
     boolean toggleS = false;
@@ -193,15 +217,19 @@ public class ArtifactControl {
     boolean tempThrowing = false;
     int tempCounter = 0;
     boolean generalManualModeCall = false;
-    public boolean pushBackArtifactsBackToggle = false;
     boolean getPoseToggle = false;
     public boolean automatedRobotPoseReset = false;
     public boolean isRobotStationary = false;
     boolean autoPoseResetToggle = false;
     boolean firstPoseReset = false;
+    public boolean robotWantsToAutoShoot = false;
+    public boolean robotWantsToStartIntake = false;
+    public boolean oneCheckPerArtifact = false;
+    public boolean generalIntakeActivaton = false;
 
     public int burstCounter = 0;
     public int forceActivationOfIntake_counter = 0;
+    public int artifactCounter = 0;
 
     public void initServo(){
         AngleTurret.setPosition(angleTurretSafePosition);
@@ -215,22 +243,21 @@ public class ArtifactControl {
 
     public void resetYaw(){
         gyroscope.resetHeading();
-        pinpointDriver.resetPosAndIMU();
     }
 
     public void initRobotPose(){
         switch(VarStorage.autonomous_case){
             case 0:
-                drive.setStartingPose(endPose_RedAudience);
+                drive.setPoseEstimate(endPose_RedAudience);
                 break;
             case 1:
-                drive.setStartingPose(endPose_BlueAudience);
+                drive.setPoseEstimate(endPose_BlueAudience);
                 break;
             case 2:
-                drive.setStartingPose(endPose_RedBasket);
+                drive.setPoseEstimate(endPose_RedBasket);
                 break;
             case 3:
-                drive.setStartingPose(endPose_BlueBasket);
+                drive.setPoseEstimate(endPose_BlueBasket);
                 break;
         }
 
@@ -266,20 +293,34 @@ public class ArtifactControl {
         updateAprilTag();
         updateArtifactPose();
         drive.update();
-        pinpointDriver.update();
 
-        pinpointHeading = pinpointDriver.getHeading(AngleUnit.DEGREES);
+        Pose2d robotPose = drive.getPoseEstimate();
+        Pose2d robotPoseVelocity = drive.getPoseVelocity();
+
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+
+        lightIntensity = ((OpticalDistanceSensor) colorSensor).getLightDetected();
+
+        leftDistanceSensor_distance = leftDistanceSensor.getDistance(DistanceUnit.CM);
+        rightDistanceSensor_distance = rightDistanceSensor.getDistance(DistanceUnit.CM);
+
+        redNorm = colors.red / colors.alpha;
+        greenNorm = colors.green / colors.alpha;
+        blueNorm = colors.blue / colors.alpha;
 
         headingAngle = gyroscope.getHeading();
-        x_position = drive.getPose().getY();
-        y_position = drive.getPose().getX();
+        x_position = robotPose.getX();
+        y_position = robotPose.getY();
 
-        convertPedroToFTCCoords();
+        if(robotPoseVelocity != null) {
+            robotVelocity = Math.abs(robotPoseVelocity.getX()) + Math.abs(robotPoseVelocity.getY());
+            robotAngularVelocity = Math.abs(robotPoseVelocity.getHeading());
 
-        robotVelocity = Math.abs(drive.getVelocity().getXComponent()) + Math.abs(drive.getVelocity().getYComponent());
-
-        if(robotVelocity < robotVelocityThreshold){
-            isRobotStationary = true;
+            if(robotVelocity < robotVelocityThreshold && robotAngularVelocity < robotAngularVelocityThreshold){
+                isRobotStationary = true;
+            }else{
+                isRobotStationary = false;
+            }
         }else{
             isRobotStationary = false;
         }
@@ -302,11 +343,61 @@ public class ArtifactControl {
             if(allowedToShoot) {
                 updateShooter();
             }
+
+            if((leftDistanceSensor_distance < leftDistanceThreshold || rightDistanceSensor_distance < rightDistanceThreshold) && artifactCounter < 3){
+                robotWantsToStartIntake = true;
+                //getArtifacts(false);
+            }else{
+                robotWantsToStartIntake = false;
+            }
+
+            if(isRobotStationary && allowedToShoot && artifactCounter >= 3){
+                robotWantsToAutoShoot = true;
+
+                //wantsToThrowArtifacts = true;
+                //oneTimeBurst = false;
+                //burstCounter = 0;
+
+                //if(forceActivationOfIntake_counter == 0) {
+                //    timer.reset();
+                //}
+
+                //forceActivationOfIntake_counter = forceActivationOfIntake_counter + 1;
+
+                //throwArtifacts(getFlyWheelPower(0, 0, false, false), true, false);
+            }else{
+                robotWantsToAutoShoot = false;
+            }
+
+            if(lightIntensity > lightIntensityThreshold){
+                if(!oneCheckPerArtifact){
+                    //if(artifactCounter < 3) {
+                    artifactCounter = artifactCounter + 1;
+//                        generalIntakeActivaton = true;
+//                        timer.reset();
+//                        switch(artifactCounter){
+//                            case 1:
+//                                targetIntakeTime = autoIntakeFirstArtifactTimer;
+//                                break;
+//                            case 2:
+//                                targetIntakeTime = autoIntakeSecondArtifactTimer;
+//                                break;
+//                            case 3:
+//                                targetIntakeTime = autoIntakeThirdArtifactTimer;
+//                                break;
+//                        }
+
+//                    }
+                    oneCheckPerArtifact = true;
+                }
+            }else{
+                oneCheckPerArtifact = false;
+            }
         }
 
         if(gamepad2.a){
             if(!artifactToggle) {
-                getArtifacts();
+                getArtifacts(false);
                 artifactToggle = true;
             }
         }else if(gamepad2.dpad_up || gamepad2.dpad_right || gamepad2.dpad_down){
@@ -338,21 +429,16 @@ public class ArtifactControl {
                     }
                     throwArtifacts(0, false, false);
                 }
+
                 artifactToggle = true;
+                artifactCounter = 0;
             }
-        }else if(gamepad2.y){
-            if(!artifactToggle) {
-                timer.reset();
-                pushBackArtifactsBackToggle = true;
-                pushArtifactsBack();
-                artifactToggle = true;
-            }
-        } else{
+        }else{
             artifactToggle = false;
         }
 
-        if(pushBackArtifactsBackToggle){
-            pushArtifactsBack();
+        if(generalIntakeActivaton){
+            getArtifacts(true);
         }
 
         if(generalManualModeCall){
@@ -375,6 +461,7 @@ public class ArtifactControl {
             tempCounter = 0;
             tempThrowing = false;
             generalManualModeCall = false;
+            generalIntakeActivaton = false;
         }
 
         if(gamepad2.x){
@@ -451,7 +538,7 @@ public class ArtifactControl {
             toggleS = false;
         }
 
-        if(gamepad2.dpad_left){
+        if(gamepad2.dpad_left && manualControl){
             if(!manualResetPoseToggle) {
                 manuallyResetPose();
                 manualResetPoseToggle = true;
@@ -498,19 +585,19 @@ public class ArtifactControl {
                             gyroscope.resetHeading();
                             if (isRedAlliance) {
                                 gyroscope.setAngleOffset(36.5 - robotAngleAprilTag);
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(36.5 - robotAngleAprilTag)));
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(126.5 - robotAngleAprilTag)));
                             } else {
                                 gyroscope.setAngleOffset(-36.5 - robotAngleAprilTag);
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(143.5 - robotAngleAprilTag)));
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(-126.5 - robotAngleAprilTag)));
                             }
                         } else if (robotAngleAprilTag < 0) {
                             gyroscope.resetHeading();
                             if (isRedAlliance) {
                                 gyroscope.setAngleOffset(36.5 + Math.abs(robotAngleAprilTag));
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(36.5 + Math.abs(robotAngleAprilTag))));
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(126.5 + Math.abs(robotAngleAprilTag))));
                             } else {
                                 gyroscope.setAngleOffset(-36.5 + Math.abs(robotAngleAprilTag));
-                                drive.setPose(new Pose(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(143.5 + Math.abs(robotAngleAprilTag))));
+                                drive.setPoseEstimate(new Pose2d(calculatedRobotPose_X, calculatedRobotPose_Y, Math.toRadians(-126.5 + Math.abs(robotAngleAprilTag))));
                             }
                         }
 
@@ -524,29 +611,19 @@ public class ArtifactControl {
         }
     }
 
-    public void convertPedroToFTCCoords(){
-        if(x_position >= 72){
-            x_position = -(x_position - 72);
-        }else if(x_position < 72){
-            x_position = Math.abs(x_position - 72);
+    public void getArtifacts(boolean inAutoMode){
+        if(inAutoMode){
+            pushArtifact = false;
+        }else{
+            Outtake_RightMotor.setPower(-0.5);
+            Outtake_LeftMotor.setPower(-0.5);
+            BlockArtifact.setPosition(artifact_block_position);
+            PushArtifactServo.setPosition(pushArtifact_retract_position);
+            Intake_LeftMotor.setPower(1);
+            Intake_RightMotor.setPower(1);
+            artifact_status_blocked = true;
+            pushArtifact = false;
         }
-
-        if(y_position >= 72){
-            y_position = Math.abs(y_position - 72);
-        }else if(y_position < 72){
-            y_position = -(y_position - 72);
-        }
-    }
-
-    public void getArtifacts(){
-        Outtake_RightMotor.setPower(-0.5);
-        Outtake_LeftMotor.setPower(-0.5);
-        BlockArtifact.setPosition(artifact_block_position);
-        PushArtifactServo.setPosition(pushArtifact_retract_position);
-        Intake_LeftMotor.setPower(1);
-        Intake_RightMotor.setPower(1);
-        artifact_status_blocked = true;
-        pushArtifact = false;
     }
 
     public void setCustomTargetFlyWheelVelocity(double flyWheelPower){
@@ -609,10 +686,12 @@ public class ArtifactControl {
                 artifact_status_blocked = false;
                 pushArtifact = false;
             }else if(timer.milliseconds() < intakeRunTimeManual && tempCounter >= 4 && tempThrowing){
+                BlockArtifact.setPosition(artifact_unblock_position);
                 Intake_LeftMotor.setPower(1);
                 Intake_RightMotor.setPower(1);
                 PushArtifactServo.setPosition(pushArtifact_push_position);
                 pushArtifact = true;
+                artifact_status_blocked = false;
             } else{
                 tempThrowing = false;
                 Intake_LeftMotor.setPower(0);
@@ -623,22 +702,9 @@ public class ArtifactControl {
 
             if(tempCounter >= 4 && timer.milliseconds() > intakeRunTimeManual){
                 generalManualModeCall = false;
+                artifact_status_blocked = true;
+                BlockArtifact.setPosition(artifact_block_position);
             }
-        }
-    }
-
-    public void pushArtifactsBack(){
-        if(timer.milliseconds() < pushBackTime && pushBackArtifactsBackToggle){
-            Outtake_RightMotor.setPower(-0.4);
-            Outtake_LeftMotor.setPower(-0.4);
-            Intake_RightMotor.setPower(-1);
-            Intake_LeftMotor.setPower(-1);
-        }else{
-            Outtake_RightMotor.setPower(0);
-            Outtake_LeftMotor.setPower(0);
-            Intake_RightMotor.setPower(0);
-            Intake_LeftMotor.setPower(0);
-            pushBackArtifactsBackToggle = false;
         }
     }
 
@@ -676,7 +742,6 @@ public class ArtifactControl {
             }else if(timer.milliseconds() > intakeRunTime && intakeRunning && burstCounter < 2){
                 Intake_LeftMotor.setPower(0);
                 Intake_RightMotor.setPower(0);
-                artifact_status_blocked = true;
                 if(intakeRunning) {
                     burstCounter = burstCounter + 1;
                     intakeRunning = false;
@@ -850,11 +915,11 @@ public class ArtifactControl {
 
     public void manuallyResetPose(){
         if(isRedAlliance) {
-            drive.setPose(new Pose(117.0, 132.0, Math.toRadians(36.5)));
+            drive.setPoseEstimate(new Pose2d(-55.5, 43.5, Math.toRadians(126.5)));
             gyroscope.resetHeading();
             gyroscope.setAngleOffset(36.5);
         }else{
-            drive.setPose(new Pose(27.0, 132.0, Math.toRadians(143.5)));
+            drive.setPoseEstimate(new Pose2d(-55.5, -43.5, Math.toRadians(-126.5)));
             gyroscope.resetHeading();
             gyroscope.setAngleOffset(-36.5);
         }
@@ -961,7 +1026,7 @@ public class ArtifactControl {
         pushArtifact = false;
         PushArtifactServo.setPosition(pushArtifact_retract_position);
 
-        artifact_status_blocked = true;
+        artifact_status_blocked = false;
         BlockArtifact.setPosition(artifact_unblock_position);
 
         timer.reset();
