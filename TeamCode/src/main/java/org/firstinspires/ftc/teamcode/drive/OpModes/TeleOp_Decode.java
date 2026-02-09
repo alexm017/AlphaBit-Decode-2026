@@ -24,7 +24,7 @@ public class TeleOp_Decode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetrys = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chasis_control = new ChasisControl(hardwareMap, gamepad1);
-        artifactControl = new ArtifactControl(hardwareMap, gamepad2, telemetrys);
+        artifactControl = new ArtifactControl(hardwareMap, gamepad1, telemetrys);
 
         while(opModeInInit()){
             if(gamepad1.dpad_left){
@@ -105,6 +105,9 @@ public class TeleOp_Decode extends LinearOpMode {
             telemetrys.addData("[Artifact] artifact Counter ", artifactControl.artifactCounter);
             telemetrys.addData("[Artifact] Light intensity ", artifactControl.lightIntensity);
             telemetrys.addData("[Artifact] generalIntakeActivaton ", artifactControl.generalIntakeActivaton);
+            telemetrys.addData("[Artifact] Robot Auto Shoot toggle ", artifactControl.robotAutoShootToggle);
+            telemetrys.addData("[Artifact] Robot Auto Intake toggle ", artifactControl.robotAutoIntakeToggle);
+            telemetrys.addData("[Artifact] isRedAlliance ", artifactControl.isRedAlliance);
 
             telemetrys.update();
         }

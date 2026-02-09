@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -31,12 +32,12 @@ public class AprilTagIdentification {
     MultipleTelemetry telemetry;
     ColorBlobLocatorProcessor colorBlobLocatorProcessor;
 
-    public static double cameraPosition_X_Offset = -0.39;
-    public static double cameraPosition_Y_Offset = -7.57;
-    public static double cameraPosition_Z_Offset = 16.53;
+    public static double cameraPosition_X_Offset = 0.0;
+    public static double cameraPosition_Y_Offset = 6.0236;
+    public static double cameraPosition_Z_Offset = 9.8818;
 
     public static double cameraOrientation_Yaw_Offset = 0.0;
-    public static double cameraOrientation_Pitch_Offset = -90.0;
+    public static double cameraOrientation_Pitch_Offset = -70.0;
     public static double cameraOrientation_Roll_Offset = 0.0;
 
     Position cameraPosition = new Position(DistanceUnit.INCH, cameraPosition_X_Offset, cameraPosition_Y_Offset, cameraPosition_Z_Offset, 0);
